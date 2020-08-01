@@ -1,7 +1,4 @@
 #Pacman in Python with PyGame
-#https://github.com/hbokmann/Pacman
-
-# import pygame._view
 import pygame
 
 black = (0,0,0)
@@ -42,10 +39,10 @@ def setupRoomOne(all_sprites_list):
     wall_list=pygame.sprite.RenderPlain()
 
     # This is a list of walls. Each is in the form [x, y, width, height]
-    walls = [ [0,0,6,600],
-              [0,0,600,6],
-              [0,600,606,6],
-              [600,0,6,606],
+    walls = [ [0,0,6,600], # -> left offset
+              [0,0,600,6], # -> Top offset
+              [0,600,606,6], # -> Bottom offset
+              [600,0,6,606], # -> Right offset
               [300,0,6,66],
               [60,60,186,6],
               [360,60,186,6],
