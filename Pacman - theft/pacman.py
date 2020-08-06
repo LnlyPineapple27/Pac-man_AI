@@ -14,8 +14,8 @@ yellow = ( 255,255, 0)
 
 #Add music
 pygame.mixer.init()
-pygame.mixer.music.load('pacman.wav')
-pygame.mixer.music.play(-1, 0.0)
+#pygame.mixer.music.load('pacman.wav')
+#pygame.mixer.music.play(-1, 0.0)
 
 # This class represents the bar at the bottom that the player controls
 class Wall(pygame.sprite.Sprite):
