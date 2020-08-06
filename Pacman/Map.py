@@ -1,4 +1,4 @@
-import pygame
+import pygame.sprite
 
 
 BLACK = (0, 0, 0)
