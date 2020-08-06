@@ -8,9 +8,6 @@ GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 PURPLE = (255, 0, 255)
 YELLOW = (255, 255, 0)
-DISPLAY_HEIGHT = 700
-DISPLAY_WIDTH = 900
-DISPLAY_WINDOW = (DISPLAY_WIDTH, DISPLAY_HEIGHT)
 DELAY = 60
 #default locations for Pacman and monstas
 w = 303-16 #Width
@@ -19,8 +16,13 @@ m_h = (4*60)+19 #Monster height
 b_h = (3*60)+19 #Binky height
 i_w = 303-16-32 #Inky width
 c_w = 303+(32-16) #Clyde width
+WALL_THICKNESS = 6
+CELL_EDGE = 60
+TEST_CASE = 10
 
-
+def display_window_evaluation(N:int, M:int)->(int,int):
+    addition = WALL_THICKNESS * 2
+    return N * CELL_EDGE + addition, M * CELL_EDGE + addition
 
 
 if __name__ == '__main__':
@@ -28,10 +30,12 @@ if __name__ == '__main__':
     pygame.init()
 
     # store display mode
-    gameDisplay = pygame.display.set_mode((DISPLAY_WINDOW))
+    window_size = display_window_evaluation(TEST_CASE, TEST_CASE)
+    gameDisplay = pygame.display.set_mode((window_size))
+    gameDisplay.fill(BLACK)
 
     # Set the title of the window
-    pygame.display.set_caption('Pacman')
+    pygame.display.set_caption('AI Pacman')
 
     # Create a surface we can draw on
     background = pygame.Surface(gameDisplay.get_size())
