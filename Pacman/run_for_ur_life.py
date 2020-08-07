@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
     # store display mode
     window_size = display_window_evaluation(TEST_CASE, TEST_CASE)
-    gameDisplay = pygame.display.set_mode((window_size))
+    gameDisplay = pygame.display.set_mode((window_size), pygame.RESIZABLE)
     gameDisplay.fill(BLACK)
 
     # Set the title of the window
