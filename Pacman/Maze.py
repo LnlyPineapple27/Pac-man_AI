@@ -2,6 +2,7 @@ import os
 import random
 #from UI import startGame
 
+
 INPUT_DIR = "..\\input"
 EMPTY = 0
 WALL = 1
@@ -94,14 +95,3 @@ class InputHandle:
             m_data = [[int(i) for i in tokens.split(" ")] for tokens in lines]
 
         return Maze(n_row, m_col, m_data, p_man)
-
-"""
-if __name__ == "__main__":
-    input_list = InputHandle()
-    input_list.items()
-    maze = input_list.get_maze()
-    maze.print_raw_data()
-    maze.print_entities()
-    difficulty = 1
-    startGame(maze, difficulty)
-"""
