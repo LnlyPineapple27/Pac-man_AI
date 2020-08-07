@@ -3,13 +3,15 @@ import sys
 import turtle
 from Maze import *
 from tkinter import messagebox
+import time
 
 
 EMPTY = 0
 WALL = 1
 TREAT = 2
 MONSTER = 3
-
+TCPS = 10  # time cost per sec
+DEATH_COST = 1000
 # --------------------------------------------Initial things-----------------------------
 window = turtle.Screen()
 window.bgcolor('black')
@@ -53,6 +55,7 @@ class Player(turtle.Turtle):
         self.gold = 0
 
     def go_up(self):
+        print("Pacman go up")
         move_to_x = self.xcor()
         move_to_y = self.ycor() + 24
         self.shape("..\\images\\gif\\pacman_up.gif")
@@ -60,6 +63,7 @@ class Player(turtle.Turtle):
             self.goto(move_to_x, move_to_y)
 
     def go_down(self):
+        print("Pacman go down")
         move_to_x = self.xcor()
         move_to_y = self.ycor() - 24
         self.shape("..\\images\\gif\\pacman_down.gif")
@@ -67,6 +71,7 @@ class Player(turtle.Turtle):
             self.goto(move_to_x, move_to_y)
 
     def go_left(self):
+        print("Pacman go left")
         move_to_x = self.xcor() - 24
         move_to_y = self.ycor()
         self.shape("..\\images\\gif\\pacman_left.gif")
@@ -74,6 +79,7 @@ class Player(turtle.Turtle):
             self.goto(move_to_x, move_to_y)
 
     def go_right(self):
+        print("Pacman go right")
         move_to_x = self.xcor() + 24
         move_to_y = self.ycor()
         self.shape("..\\images\\gif\\pacman_right.gif")
@@ -219,7 +225,13 @@ def setup_maze(board, difficulty, init_index):
     player.goto(-288 + (init_col * 24), 288 - (init_row * 24))
 
 
+def score_evaluation(gold, died, total_time):
+    dc = DEATH_COST if died else 0
+    return gold - dc - total_time * TCPS
+
+
 def startGame(data: Maze, difficulty):
+    start_time = time.time()
     setup_maze(data.maze_data, difficulty, data.pacman_init_position)
     turtle.listen()
     turtle.onkey(player.go_up, 'Up')
@@ -248,6 +260,7 @@ def startGame(data: Maze, difficulty):
 
         for enemy in enemies:
             if player.is_collision(enemy):
+                player.gold -= 1000
                 print("Player died!!")
                 player.destroy()
                 died = True
@@ -256,7 +269,12 @@ def startGame(data: Maze, difficulty):
         window.update()
         # check goal
         if not treats_left or died:
+            print("END game")
+            end_time = time.time()
+            total_time = int(end_time - start_time)
+            score = score_evaluation(player.gold, died, total_time)
             mesg = "You WON" if not treats_left else "You DIED"
+            mesg += ", Score = {}, took {} seconds".format(score, total_time)
             messagebox.showinfo("Boom Surprise Madafaka", mesg)
             sys.exit()
 
