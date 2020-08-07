@@ -51,8 +51,10 @@ class InputHandle:
         :return:
         """
         print("Item\t\t|\tPath")
+
         for item in self.path_list.items():
             print(item[0] + "\t|\t" + item[1])
+
 
     def get_maze(self, file_name: str = None) -> Maze:
         """
@@ -95,3 +97,4 @@ class InputHandle:
             m_data = [[int(i) for i in tokens.split(" ")] for tokens in lines]
 
         return Maze(n_row, m_col, m_data, p_man)
+
