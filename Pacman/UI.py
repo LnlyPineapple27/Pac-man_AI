@@ -251,7 +251,7 @@ def startGame(data: Maze, difficulty):
                 print("Player died!!")
                 player.destroy()
                 died = True
-
+ 
         # Update screen
         window.update()
         # check goal
@@ -260,6 +260,7 @@ def startGame(data: Maze, difficulty):
         if died:
             messagebox.showinfo("Boom Surprise Madafaka", "You DIED")
             sys.exit()
+
 
 if __name__ == "__main__":
     input_list = InputHandle()
