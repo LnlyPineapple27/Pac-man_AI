@@ -55,7 +55,7 @@ def readfile(file_des):
 
 
 if __name__ == "__main__":
-    row, col, data, p_index = readfile("..\input\data1.txt")
+    row, col, data, p_index = readfile("..\\input\\data1.txt")
     maze_1 = Maze(row, col, data, p_index)
     print("Size: \tRow:", maze_1.N_row, " Col:", maze_1.M_col)
     #print("Data: ", maze_1.maze_data)
