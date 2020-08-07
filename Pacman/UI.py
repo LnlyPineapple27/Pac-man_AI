@@ -92,6 +92,10 @@ class Player(turtle.Turtle):
         else:
             return False
 
+    def destroy(self):
+        self.goto(2000, 2000)
+        self.hideturtle()
+
 
 class Enemy(turtle.Turtle):
     def __init__(self, x, y):
@@ -187,6 +191,7 @@ player = Player()
 
 # start position of character
 def setup_maze(board, difficulty, init_index):
+
     init_col = init_index[0]
     init_row = init_index[1]
     for i in range(len(board)):
@@ -217,7 +222,6 @@ def setup_maze(board, difficulty, init_index):
 def startGame(data: Maze, difficulty):
     setup_maze(data.maze_data, difficulty, data.pacman_init_position)
     turtle.listen()
-    t = ["W","w","up"]
     turtle.onkey(player.go_up, 'Up')
     turtle.onkey(player.go_down, 'Down')
     turtle.onkey(player.go_right, 'Right')
@@ -227,9 +231,13 @@ def startGame(data: Maze, difficulty):
     for enemy in enemies:
         turtle.ontimer(enemy.move, t=250)
 
-    while True:
+    treats_left = len(treasures)
+    died = False
+    while treats_left or not died :
         for treasure in treasures:
             if player.is_collision(treasure):
+                # Desc treats left
+                treats_left -= 1
                 # Add the treasure gold to the player gold
                 player.gold += treasure.gold
                 print('Player Gold: {}'.format(player.gold))
@@ -241,17 +249,24 @@ def startGame(data: Maze, difficulty):
         for enemy in enemies:
             if player.is_collision(enemy):
                 print("Player died!!")
-                sys.exit()
+                player.destroy()
+                died = True
+ 
         # Update screen
         window.update()
+        # check goal
+        if not treats_left:
+            messagebox.showinfo("Boom Surprise Madafaka", "You WON")
+        if died:
+            messagebox.showinfo("Boom Surprise Madafaka", "You DIED")
+            sys.exit()
 
 
 if __name__ == "__main__":
     input_list = InputHandle()
     input_list.items()
-    maze = input_list.get_maze("data2.txt")
+    maze = input_list.get_maze("data1.txt")
     maze.print_raw_data()
     maze.print_entities()
-    difficulty = 1
-    messagebox.showinfo("Boom Surprise Madafaka", "Let's get started")
+    difficulty = 3
     startGame(maze, difficulty)
