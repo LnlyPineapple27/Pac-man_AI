@@ -255,10 +255,9 @@ def startGame(data: Maze, difficulty):
         # Update screen
         window.update()
         # check goal
-        if not treats_left:
-            messagebox.showinfo("Boom Surprise Madafaka", "You WON")
-        if died:
-            messagebox.showinfo("Boom Surprise Madafaka", "You DIED")
+        if not treats_left or died:
+            mesg = "You WON" if not treats_left else "You DIED"
+            messagebox.showinfo("Boom Surprise Madafaka", mesg)
             sys.exit()
 
 
