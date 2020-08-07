@@ -16,7 +16,7 @@ DEATH_COST = 1000
 window = turtle.Screen()
 window.bgcolor('black')
 window.title('AI Pacman')
-window.setup(700, 700)
+window.setup(1000, 1000)
 window.tracer(0)
 # --------------------------------------------------
 images = ["..\\images\\gif\\Blue_left.gif",
@@ -104,10 +104,21 @@ class Player(turtle.Turtle):
 
 
 class Enemy(turtle.Turtle):
-    def __init__(self, x, y):
+    def __init__(self, x, y, num):
         turtle.Turtle.__init__(self)
-        self.shape("..\\images\\gif\\Blue_left.gif")
-        self.color("blue")
+        self.num = num
+        self.shape('triangle')
+
+        if self.num == 0:
+            self.shape("..\\images\\gif\\Blue_left.gif")
+        elif self.num == 1:
+            self.shape("..\\images\\gif\\Orange_left.gif")
+        elif self.num == 2:
+            self.shape("..\\images\\gif\\Pink_left.gif")
+        elif self.num == 3:
+            self.shape("..\\images\\gif\\Red_left.gif")
+
+        self.color("green")
         self.penup()
         self.speed(0)
         # self.gold = 25
@@ -125,11 +136,25 @@ class Enemy(turtle.Turtle):
         if self.direction == "right":
             dx = 24
             dy = 0
-            self.shape("..\\images\\gif\\Blue_right.gif")
+            if self.num == 0:
+                self.shape("..\\images\\gif\\Blue_right.gif")
+            elif self.num == 1:
+                self.shape("..\\images\\gif\\Orange_right.gif")
+            elif self.num == 2:
+                self.shape("..\\images\\gif\\Pink_right.gif")
+            elif self.num == 3:
+                self.shape("..\\images\\gif\\Red_right.gif")
         if self.direction == "left":
             dx = -24
             dy = 0
-            self.shape("..\\images\\gif\\Blue_left.gif")
+            if self.num == 0:
+                self.shape("..\\images\\gif\\Blue_left.gif")
+            elif self.num == 1:
+                self.shape("..\\images\\gif\\Orange_left.gif")
+            elif self.num == 2:
+                self.shape("..\\images\\gif\\Pink_left.gif")
+            elif self.num == 3:
+                self.shape("..\\images\\gif\\Red_left.gif")
         else:
             dx = 0
             dy = 0
@@ -220,7 +245,8 @@ def setup_maze(board, difficulty, init_index):
                 treasures.append(Treasure(screen_x, screen_y))
 
             if unity == MONSTER and difficulty != 1:
-                enemies.append(Enemy(screen_x, screen_y))
+                num = len(enemies)
+                enemies.append(Enemy(screen_x, screen_y, num))
     # print Player according to its given location
     player.goto(-288 + (init_col * 24), 288 - (init_row * 24))
 
@@ -231,59 +257,66 @@ def score_evaluation(gold, died, total_time):
 
 
 def startGame(data: Maze, difficulty):
-    start_time = time.time()
-    setup_maze(data.maze_data, difficulty, data.pacman_init_position)
-    turtle.listen()
-    turtle.onkey(player.go_up, 'Up')
-    turtle.onkey(player.go_down, 'Down')
-    turtle.onkey(player.go_right, 'Right')
-    turtle.onkey(player.go_left, 'Left')
 
-    # Initiate motion of the enemies
-    for enemy in enemies:
-        turtle.ontimer(enemy.move, t=250)
+    try:
+        start_time = time.time()
+        setup_maze(data.maze_data, difficulty, data.pacman_init_position)
+        turtle.listen()
+        turtle.onkey(player.go_up, 'Up')
+        turtle.onkey(player.go_down, 'Down')
+        turtle.onkey(player.go_right, 'Right')
+        turtle.onkey(player.go_left, 'Left')
 
-    treats_left = len(treasures)
-    died = False
-    while treats_left or not died :
-        for treasure in treasures:
-            if player.is_collision(treasure):
-                # Desc treats left
-                treats_left -= 1
-                # Add the treasure gold to the player gold
-                player.gold += treasure.gold
-                print('Player Gold: {}'.format(player.gold))
-                # Destroy the treasure
-                treasure.destroy()
-                # Remove the treasure
-                treasures.remove(treasure)
-
+        # Initiate motion of the enemies
         for enemy in enemies:
-            if player.is_collision(enemy):
-                player.gold -= 1000
-                print("Player died!!")
-                player.destroy()
-                died = True
- 
-        # Update screen
-        window.update()
-        # check goal
-        if not treats_left or died:
-            print("END game")
-            end_time = time.time()
-            total_time = int(end_time - start_time)
-            score = score_evaluation(player.gold, died, total_time)
-            mesg = "You WON" if not treats_left else "You DIED"
-            mesg += ", Score = {}, took {} seconds".format(score, total_time)
-            messagebox.showinfo("Boom Surprise Madafaka", mesg)
-            sys.exit()
+            turtle.ontimer(enemy.move, t=250)
 
+        treats_left = len(treasures)
+        died = False
+        while treats_left or not died :
+            for treasure in treasures:
+                if player.is_collision(treasure):
+                    # Desc treats left
+                    treats_left -= 1
+                    # Add the treasure gold to the player gold
+                    player.gold += treasure.gold
+                    print('Player Gold: {}'.format(player.gold))
+                    # Destroy the treasure
+                    treasure.destroy()
+                    # Remove the treasure
+                    treasures.remove(treasure)
+
+            for enemy in enemies:
+                if player.is_collision(enemy):
+                    player.gold -= 1000
+                    print("Player died!!")
+                    player.destroy()
+                    died = True
+
+            # Update screen
+            window.update()
+            # check goal
+            if not treats_left or died:
+                print("END game")
+                end_time = time.time()
+                total_time = int(end_time - start_time)
+                score = score_evaluation(player.gold, died, total_time)
+                mesg = "You WON" if not treats_left else "You DIED"
+                mesg += ", Score = {}, took {} seconds".format(score, total_time)
+                messagebox.showinfo("Boom Surprise Madafaka", mesg)
+                sys.exit()
+
+        turtle.exitonclick()
+    except Exception:
+        pass
+    finally:
+        print("[Game closed]")
 
 if __name__ == "__main__":
     input_list = InputHandle()
     input_list.items()
-    maze = input_list.get_maze("data1.txt")
-    maze.print_raw_data()
-    maze.print_entities()
+    maze = input_list.get_maze("walls.txt")
+    # maze.print_raw_data()
+    # maze.print_entities()
     difficulty = 3
     startGame(maze, difficulty)
