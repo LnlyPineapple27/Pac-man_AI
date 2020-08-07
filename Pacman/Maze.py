@@ -1,5 +1,6 @@
 import os
 import random
+#from UI import startGame
 
 INPUT_DIR = "..\\input"
 EMPTY = 0
@@ -28,7 +29,7 @@ class Maze:
         for row in self.maze_data:
             for ent in row:
                 print(ENTITY_NAME[row[ent]], end="\t")
-            print()
+            print("\n")
 
 
 class InputHandle:
@@ -94,10 +95,13 @@ class InputHandle:
 
         return Maze(n_row, m_col, m_data, p_man)
 
-
+"""
 if __name__ == "__main__":
     input_list = InputHandle()
     input_list.items()
     maze = input_list.get_maze()
     maze.print_raw_data()
     maze.print_entities()
+    difficulty = 1
+    startGame(maze, difficulty)
+"""
