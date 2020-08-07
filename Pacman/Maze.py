@@ -1,11 +1,12 @@
 import os
 import random
+
 INPUT_DIR = "..\\input"
 EMPTY = 0
 WALL = 1
 TREAT = 2
 MONSTER = 3
-ENTITY_NAME =["Empty", "Wall", "Treat", "Monster"]
+ENTITY_NAME = ["Empty", "Wall", "Treat", "Monster"]
 
 
 class Maze:
@@ -16,11 +17,14 @@ class Maze:
         self.pacman_init_position = m_p_index
 
     def print_raw_data(self):
-        print("Data: ")
         for i in self.maze_data:
             print(i)
 
-    def print_entities(self):
+    def print_entities(self) -> None:
+        """
+        Print all entities by name. \n
+        :return: None
+        """
         for row in self.maze_data:
             for ent in row:
                 print(ENTITY_NAME[row[ent]], end="\t")
@@ -38,19 +42,26 @@ class InputHandle:
                 if entry.is_file():
                     self.path_list[entry.name] = input_dir + '\\' + entry.name
 
-    def list_input(self):
-        print("item\t\t|\tpath")
+    def items(self) -> None:
+        """
+        List item read.\n
+        item\t\t|\tpath.\n
+        :return:
+        """
+        print("Item\t\t|\tPath")
         for item in self.path_list.items():
             print(item[0] + "\t|\t" + item[1])
 
-    def read_maze(self, file_name=None):
+    def get_maze(self, file_name: str = None) -> Maze:
         """
-        Just read a maze from list of input
-        :param file_name:
-        :return:
+        Just get a maze from item in list of input.
+        Random maze in input's item if null argument or wrong name.\n
+        :param file_name: Name of item to get maze
+        :return: A Maze
         """
         # choices random item if file name is null
-        file_path = self.path_list[file_name] if file_name else random.choices(list(self.path_list.values())).pop()
+        file_path = self.path_list[file_name] if file_name and file_name in self.path_list.keys()\
+                                            else random.choices(list(self.path_list.values())).pop()
         with open(file_path, 'r') as file:
             lines = file.readlines()
             '''
@@ -70,7 +81,6 @@ class InputHandle:
             p_man = int(tokens[0]), int(tokens[1])
 
             # Data reading
-            m_data = [[int(i) for i in tokens.split(" ")] for tokens in lines]
             '''
             for line in lines:
                 line = line.rstrip('\n')
@@ -80,12 +90,14 @@ class InputHandle:
                     tokens.append(int(i))
                 m_data.append(tokens)
             '''
+            m_data = [[int(i) for i in tokens.split(" ")] for tokens in lines]
+
         return Maze(n_row, m_col, m_data, p_man)
 
 
 if __name__ == "__main__":
     input_list = InputHandle()
-    input_list.list_input()
-    maze = input_list.read_maze()  # random maze in input
+    input_list.items()
+    maze = input_list.get_maze()
+    maze.print_raw_data()
     maze.print_entities()
-
