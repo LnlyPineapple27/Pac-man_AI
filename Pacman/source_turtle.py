@@ -3,14 +3,24 @@ import random
 import math
 import sys
 
-# hello mn
-# demo chạy UI pacman = turtle nha
-# White window for game
+images = ["..\\images\\gif\\Blue_left.gif",
+            "..\\images\\gif\\Red_left.gif",
+            "..\\images\\gif\\Pink_left.gif",
+            "..\\images\\gif\\Orange_left.gif",
+            "..\\images\\gif\\Blue_right.gif",
+            "..\\images\\gif\\Red_right.gif",
+            "..\\images\\gif\\Pink_right.gif",
+            "..\\images\\gif\\Orange_right.gif",
+            "..\\images\\gif\\pacman_right.gif",
+            "..\\images\\gif\\pacman_left.gif",
+            "..\\images\\gif\\pacman_up.gif",
+            "..\\images\\gif\\pacman_down.gif"]
+
 wn = turtle.Screen()
 wn.bgcolor('black')
 wn.title('Maze Game')
 wn.setup(700, 700)
-
+wn.tracer(0)
 class Pen(turtle.Turtle):
     def __init__(self):
         turtle.Turtle.__init__(self)
@@ -22,7 +32,7 @@ class Pen(turtle.Turtle):
 class Player(turtle.Turtle):
     def __init__(self):
         turtle.Turtle.__init__(self)
-        self.shape('circle')
+        self.shape("..\\images\\gif\\pacman_right.gif")
         self.color('gold')
         self.penup()
         self.speed(0)
@@ -30,25 +40,29 @@ class Player(turtle.Turtle):
 
     def go_up(self):
         move_to_x = self.xcor()
-        move_to_y = self.ycor() +24
+        move_to_y = self.ycor() + 24
+        self.shape("..\\images\\gif\\pacman_up.gif")
         if (move_to_x,move_to_y) not in walls:
             self.goto(move_to_x,move_to_y)
 
     def go_down(self):
         move_to_x = self.xcor()
         move_to_y = self.ycor() - 24
+        self.shape("..\\images\\gif\\pacman_down.gif")
         if (move_to_x,move_to_y) not in walls:
             self.goto(move_to_x,move_to_y)
 
     def go_left(self):
-        move_to_x = self.xcor() -24
+        move_to_x = self.xcor() - 24
         move_to_y = self.ycor()
+        self.shape("..\\images\\gif\\pacman_left.gif")
         if (move_to_x,move_to_y) not in walls:
             self.goto(move_to_x,move_to_y)
 
     def go_right(self):
-        move_to_x = self.xcor() +24
+        move_to_x = self.xcor() + 24
         move_to_y = self.ycor()
+        self.shape("..\\images\\gif\\pacman_right.gif")
         if (move_to_x,move_to_y) not in walls:
             self.goto(move_to_x,move_to_y)
 
@@ -101,12 +115,14 @@ class obstacle(turtle.Turtle):
 # Cause motion within given millisecond
         turtle.ontimer(self.move, t=random.randint(100,300))
 """
+for img in images:
+    turtle.register_shape(img)
 
 class Enemy(turtle.Turtle):
     def __init__(self, x, y):
         turtle.Turtle.__init__(self)
-        self.shape("square")
-        self.color("green")
+        self.shape("..\\images\\gif\\Blue_left.gif")
+        self.color("blue")
         self.penup()
         self.speed(0)
         self.gold = 25
@@ -123,9 +139,11 @@ class Enemy(turtle.Turtle):
         if self.direction == "right":
             dx = 24
             dy = 0
+            self.shape("..\\images\\gif\\Blue_right.gif")
         if self.direction == "left":
             dx = -24
             dy = 0
+            self.shape("..\\images\\gif\\Blue_left.gif")
         else:
             dx = 0
             dy = 0
@@ -162,7 +180,6 @@ class Treasure(turtle.Turtle):
        self.goto (2000,2000)
        self.hideturtle()
 
-# Tworzenie listy poziomów
 levels = ['']
 treasures =[]
 level_1 = [
