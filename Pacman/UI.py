@@ -16,8 +16,11 @@ DEATH_COST = 1000
 window = turtle.Screen()
 window.bgcolor('black')
 window.title('AI Pacman')
-window.setup(1000, 1000)
-window.tracer(0)
+window.setup(width = 1000, height = 800, startx = 0, starty = 10)
+window.tracer(0, 0)
+turtle.ht()
+turtle.speed(0)
+
 # --------------------------------------------------
 images = ["..\\images\\gif\\Blue_left.gif",
           "..\\images\\gif\\Red_left.gif",
@@ -230,8 +233,11 @@ def setup_maze(board, difficulty, init_index):
             # get the character of each x,y coord
 
             unity = board[i][j]
-            screen_x = -288 + (j * 24)
-            screen_y = 288 - (i * 24)
+            val_x = 400
+            val_y = 350
+            # 288
+            screen_x = ((-1) * val_x) + (j * 24)
+            screen_y = val_y - (i * 24)
             # printing the maze
 
             if unity == WALL:
@@ -248,7 +254,7 @@ def setup_maze(board, difficulty, init_index):
                 num = len(enemies)
                 enemies.append(Enemy(screen_x, screen_y, num))
     # print Player according to its given location
-    player.goto(-288 + (init_col * 24), 288 - (init_row * 24))
+    player.goto(((-1) * val_x) + (init_col * 24), val_y - (init_row * 24))
 
 
 def score_evaluation(gold, died, total_time):
