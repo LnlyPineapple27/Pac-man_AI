@@ -4,6 +4,7 @@ import turtle
 from Maze import *
 from tkinter import messagebox
 import time
+import random
 import Level1
 
 
@@ -17,7 +18,7 @@ DEATH_COST = 100000
 window = turtle.Screen()
 window.bgcolor('black')
 window.title('AI Pacman')
-window.setup(width = 1000, height = 800, startx = 0, starty = 10)
+window.setup(width = 1000, height = 810, startx = 0, starty = 10)
 window.tracer(0)
 # --------------------------------------------------
 images = ["..\\images\\gif\\Blue_left.gif",
@@ -128,6 +129,9 @@ class Enemy(turtle.Turtle):
         # "up", "down",
 
     def move(self):
+        if difficulty == 1 or difficulty == 2:
+            return
+
         if self.direction == "up":
             dx = 0
             dy = 24
@@ -181,7 +185,7 @@ class Enemy(turtle.Turtle):
             self.direction = random.choice(["up", "down", "left", "right"])
 
         # Set timer to move next time
-        turtle.ontimer(self.move, t=random.randint(10, 30))
+        #turtle.ontimer(self.move, t=random.randint(10, 30))
 
     def is_close(self, other):
         a = self.xcor() - other.xcor()
@@ -259,7 +263,9 @@ def score_evaluation(gold, died, total_time):
     dc = DEATH_COST if died else 0
     return gold - dc - total_time * TCPS
 
-
+def endGame():
+    print("[Game closed]")
+    sys.exit()
 def startGame(data: Maze, difficulty):
     step = 1
     start_time = time.time()
@@ -271,8 +277,9 @@ def startGame(data: Maze, difficulty):
     turtle.onkey(player.go_left, 'Left')
 
     # Initiate motion of the enemies
-    for enemy in enemies:
-        turtle.ontimer(enemy.move, t=250)
+    if difficulty != 1 and difficulty != 2:
+        for enemy in enemies:
+            turtle.ontimer(enemy.move, t=250)
 
     treats_left = len(treasures)
     died = False
@@ -314,6 +321,8 @@ def startGame(data: Maze, difficulty):
                 print("Player died!!")
                 player.destroy()
                 died = True
+            if difficulty != 1 and difficulty != 2:
+                turtle.ontimer(enemy.move, t=250)
 
         # Update screen
         window.update()
@@ -325,17 +334,17 @@ def startGame(data: Maze, difficulty):
             score = score_evaluation(player.gold, died, total_time)
             mesg = "You WON" if not treats_left else "You DIED"
             mesg += ", Score = {}, took {} seconds".format(score, step)
-            messagebox.showinfo("Boom Surprise Madafaka", mesg)
-            sys.exit()
+            messagebox.showinfo("Congratulations!!!!", mesg)
+            endGame()
         step += 1
 
-        #turtle.exitonclick()
-
+    #turtle.exitonclick()
+    endGame()
 
 if __name__ == "__main__":
     input_list = InputHandle()
     input_list.items()
-    maze = input_list.get_maze("lv1.txt")
+    maze = input_list.get_maze("walls.txt")
     # maze.print_raw_data()
     # maze.print_entities()
     difficulty = 2
