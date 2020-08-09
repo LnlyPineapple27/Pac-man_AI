@@ -226,8 +226,8 @@ player = Player()
 # start position of character
 def setup_maze(board, difficulty, init_index):
 
-    init_col = init_index[0]
-    init_row = init_index[1]
+    init_col = init_index.x
+    init_row = init_index.y
     for i in range(len(board)):
         for j in range(len(board[i])):
             # get the character of each x,y coord
@@ -318,10 +318,11 @@ def startGame(data: Maze, difficulty):
     finally:
         print("[Game closed]")
 
+
 if __name__ == "__main__":
     input_list = InputHandle()
     input_list.items()
-    maze = input_list.get_maze("walls.txt")
+    maze = input_list.get_maze("lv1.txt")
     # maze.print_raw_data()
     # maze.print_entities()
     difficulty = 3
