@@ -1,6 +1,8 @@
 import os
 import random
-#from UI import startGame
+from Point import Point
+
+# from UI import startGame
 
 
 INPUT_DIR = "..\\input"
@@ -12,11 +14,12 @@ ENTITY_NAME = ["Empty", "Wall", "Treat", "Monster"]
 
 
 class Maze:
-    def __init__(self, m_row=0, m_col=0, m_data=None, m_p_index=None):
+    def __init__(self, m_row=0, m_col=0, m_data=None, m_p_index=None, treats=None):
         self.N_row = m_row
         self.M_col = m_col
         self.maze_data = m_data
         self.pacman_init_position = m_p_index
+        self.treats = treats
 
     def print_raw_data(self):
         for i in self.maze_data:
@@ -37,6 +40,7 @@ class InputHandle:
     """
     Store all of input file path
     """
+
     def __init__(self, input_dir=INPUT_DIR):
         self.path_list = {}
         with os.scandir(input_dir) as i:
@@ -55,7 +59,6 @@ class InputHandle:
         for item in self.path_list.items():
             print(item[0] + "\t|\t" + item[1])
 
-
     def get_maze(self, file_name: str = None) -> Maze:
         """
         Just get a maze from item in list of input.
@@ -64,8 +67,8 @@ class InputHandle:
         :return: A Maze
         """
         # choices random item if file name is null
-        file_path = self.path_list[file_name] if file_name and file_name in self.path_list.keys()\
-                                            else random.choices(list(self.path_list.values())).pop()
+        file_path = self.path_list[file_name] if file_name and file_name in self.path_list.keys() \
+            else random.choices(list(self.path_list.values())).pop()
         with open(file_path, 'r') as file:
             lines = file.readlines()
             '''
@@ -73,16 +76,16 @@ class InputHandle:
             tmp = tmp.rstrip('\n')
             tmp = tmp.split(" ")
             print(tmp)
-            m_col = int(tmp.pop())
-            n_row = int(tmp.pop())
+            col = int(tmp.pop())
+            row = int(tmp.pop())
             '''
             # First line includes N, M as "N M"
             tokens = lines.pop(0).split(" ")  # tokens = ["N", "M"]
-            n_row, m_col = int(tokens[0]), int(tokens[1])
+            rows, columns = int(tokens[0]), int(tokens[1])
 
             # Last line includes x, y as "x y"
             tokens = lines.pop().split(" ")  # tokens = ["x", "y"]
-            p_man = int(tokens[0]), int(tokens[1])
+            p_man = Point(int(tokens[0]), int(tokens[1]))
 
             # Data reading
             '''
@@ -94,7 +97,16 @@ class InputHandle:
                     tokens.append(int(i))
                 m_data.append(tokens)
             '''
-            m_data = [[int(i) for i in tokens.split(" ")] for tokens in lines]
-
-        return Maze(n_row, m_col, m_data, p_man)
-
+            treats = []
+            m_data = []
+            for i in range(rows):
+                tokens = lines[i].split(" ")
+                m_row_data = []
+                for j in range(columns):
+                    m_unity = int(tokens[j])
+                    if m_unity == TREAT:
+                        treats.append(Point(i, j))
+                    m_row_data.append(m_unity)
+                m_data.append(m_row_data)
+        # m_data = [[int(i) for i in tokens.split(" ")] for tokens in lines]
+        return Maze(rows, columns, m_data, p_man, treats)
