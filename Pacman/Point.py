@@ -7,7 +7,7 @@ class Point:
         self.x = x
         self.y = y
 
-    def manhattan_distant(self, another):
+    def manhattan_distance(self, another):
         return abs(self.x - another.x) + abs(self.y - another.y)
 
     def euclid_distant(self, another):

@@ -4,6 +4,7 @@ import turtle
 from Maze import *
 from tkinter import messagebox
 import time
+import Level1
 
 
 EMPTY = 0
@@ -11,16 +12,13 @@ WALL = 1
 TREAT = 2
 MONSTER = 3
 TCPS = 10  # time cost per sec
-DEATH_COST = 1000
+DEATH_COST = 100000
 # --------------------------------------------Initial things-----------------------------
 window = turtle.Screen()
 window.bgcolor('black')
 window.title('AI Pacman')
 window.setup(width = 1000, height = 800, startx = 0, starty = 10)
-window.tracer(0, 0)
-turtle.ht()
-turtle.speed(0)
-
+window.tracer(0)
 # --------------------------------------------------
 images = ["..\\images\\gif\\Blue_left.gif",
           "..\\images\\gif\\Red_left.gif",
@@ -263,60 +261,75 @@ def score_evaluation(gold, died, total_time):
 
 
 def startGame(data: Maze, difficulty):
+    step = 1
+    start_time = time.time()
+    setup_maze(data.maze_data, difficulty, data.pacman_init_position)
+    #turtle.listen()
+    turtle.onkey(player.go_up, 'Up')
+    turtle.onkey(player.go_down, 'Down')
+    turtle.onkey(player.go_right, 'Right')
+    turtle.onkey(player.go_left, 'Left')
 
-    try:
-        start_time = time.time()
-        setup_maze(data.maze_data, difficulty, data.pacman_init_position)
-        turtle.listen()
-        turtle.onkey(player.go_up, 'Up')
-        turtle.onkey(player.go_down, 'Down')
-        turtle.onkey(player.go_right, 'Right')
-        turtle.onkey(player.go_left, 'Left')
+    # Initiate motion of the enemies
+    for enemy in enemies:
+        turtle.ontimer(enemy.move, t=250)
 
-        # Initiate motion of the enemies
+    treats_left = len(treasures)
+    died = False
+    cur_pos = maze.pacman_init_position
+    explored = [cur_pos]
+
+    while treats_left or not died :
+        time.sleep(0.5)
+        next_move = Level1.level1(maze, cur_pos, explored, True)
+        if next_move == "Up":
+            cur_pos.x -= 1
+            player.go_up()
+        elif next_move == "Down":
+            cur_pos.x += 1
+            player.go_down()
+        elif next_move == "Left":
+            cur_pos.y -= 1
+            player.go_left()
+        else:
+            cur_pos.y += 1
+            player.go_right()
+        explored.append(cur_pos.position())
+
+        for treasure in treasures:
+            if player.is_collision(treasure):
+                # Desc treats left
+                treats_left -= 1
+                # Add the treasure gold to the player gold
+                player.gold += treasure.gold
+                print('Player Gold: {}'.format(player.gold))
+                # Destroy the treasure
+                treasure.destroy()
+                # Remove the treasure
+                treasures.remove(treasure)
+
         for enemy in enemies:
-            turtle.ontimer(enemy.move, t=250)
+            if player.is_collision(enemy):
+                player.gold -= 1000
+                print("Player died!!")
+                player.destroy()
+                died = True
 
-        treats_left = len(treasures)
-        died = False
-        while treats_left or not died :
-            for treasure in treasures:
-                if player.is_collision(treasure):
-                    # Desc treats left
-                    treats_left -= 1
-                    # Add the treasure gold to the player gold
-                    player.gold += treasure.gold
-                    print('Player Gold: {}'.format(player.gold))
-                    # Destroy the treasure
-                    treasure.destroy()
-                    # Remove the treasure
-                    treasures.remove(treasure)
+        # Update screen
+        window.update()
+        # check goal
+        if not treats_left or died:
+            print("END game")
+            end_time = time.time()
+            total_time = int(end_time - start_time)
+            score = score_evaluation(player.gold, died, total_time)
+            mesg = "You WON" if not treats_left else "You DIED"
+            mesg += ", Score = {}, took {} seconds".format(score, step)
+            messagebox.showinfo("Boom Surprise Madafaka", mesg)
+            sys.exit()
+        step += 1
 
-            for enemy in enemies:
-                if player.is_collision(enemy):
-                    player.gold -= 1000
-                    print("Player died!!")
-                    player.destroy()
-                    died = True
-
-            # Update screen
-            window.update()
-            # check goal
-            if not treats_left or died:
-                print("END game")
-                end_time = time.time()
-                total_time = int(end_time - start_time)
-                score = score_evaluation(player.gold, died, total_time)
-                mesg = "You WON" if not treats_left else "You DIED"
-                mesg += ", Score = {}, took {} seconds".format(score, total_time)
-                messagebox.showinfo("Boom Surprise Madafaka", mesg)
-                sys.exit()
-
-        turtle.exitonclick()
-    except Exception:
-        pass
-    finally:
-        print("[Game closed]")
+        #turtle.exitonclick()
 
 
 if __name__ == "__main__":
@@ -325,5 +338,5 @@ if __name__ == "__main__":
     maze = input_list.get_maze("lv1.txt")
     # maze.print_raw_data()
     # maze.print_entities()
-    difficulty = 3
+    difficulty = 2
     startGame(maze, difficulty)
