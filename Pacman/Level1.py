@@ -3,7 +3,7 @@ from Maze import *
 
 def level1(map: Maze, cur_pos: Point, explored: list, ghost=False) -> str:  #map: Maze(rows, columns, m_data, p_man, treats)
     goal = map.treats[0]
-    print(cur_pos.position())
+    #print(cur_pos.position())
     up = Point(cur_pos.x - 1, cur_pos.y)
     down = Point(cur_pos.x + 1, cur_pos.y)
     left = Point(cur_pos.x, cur_pos.y - 1)
