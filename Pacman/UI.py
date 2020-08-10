@@ -271,10 +271,10 @@ def startGame(data: Maze, difficulty):
     start_time = time.time()
     setup_maze(data.maze_data, difficulty, data.pacman_init_position)
     #turtle.listen()
-    turtle.onkey(player.go_up, 'Up')
-    turtle.onkey(player.go_down, 'Down')
-    turtle.onkey(player.go_right, 'Right')
-    turtle.onkey(player.go_left, 'Left')
+    #turtle.onkey(player.go_up, 'Up')
+    #turtle.onkey(player.go_down, 'Down')
+    #turtle.onkey(player.go_right, 'Right')
+    #turtle.onkey(player.go_left, 'Left')
 
     # Initiate motion of the enemies
     if difficulty != 1 and difficulty != 2:
@@ -344,7 +344,7 @@ def startGame(data: Maze, difficulty):
 if __name__ == "__main__":
     input_list = InputHandle()
     input_list.items()
-    maze = input_list.get_maze("walls.txt")
+    maze = input_list.get_maze("lvl1.txt")
     # maze.print_raw_data()
     # maze.print_entities()
     difficulty = 2
