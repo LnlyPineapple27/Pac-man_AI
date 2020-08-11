@@ -1,18 +1,18 @@
 Pacman or monsters only moves in 4 direction: left, right, bottom, up and cannot move
 over or through the wall. The game has four levels:
--Level1: 
-+Pac man: biết vị trí food
-+Monster: không có
-+Food: chỉ 1
--Level2:
+- Level 1: 
++ Pac man: biết vị trí food
++ Monster: không có
++ Food: chỉ 1
+- Level 2:
 + Pacman: biết vị trí food, đụng quái thì chết
 + Monster: Có, đứng yên
 + Food: chỉ 1
-- Level3:
+- Level 3:
 + Pacman: không thấy food nếu food nằm ngoài tầm nhìn, tầm nhìn = 3 bước gần nhất = các ô kề (8 ô x 3?)	
 + Monster: có nhiều quái, di chuyển 1 bước quanh vị trí ban đầu? lúc mới spawn, Pacman đi 1 bước thì di chyển 1 bước
 + Food: nhiều
-- Level4: map đóng?
+- Level 4: map đóng?
 + Pacman: tìm càng nhiều thức ăn càng tốt, đụng quái thì chết
 + Monster: có nhiều quái, tìm và diệt pacman, quái đi qua nhau được, Pacman đi 1 bước thì di chyển 1 bước
 + Food: nhiều
