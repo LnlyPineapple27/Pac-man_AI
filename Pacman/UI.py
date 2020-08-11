@@ -11,7 +11,8 @@ EMPTY = 0
 WALL = 1
 TREAT = 2
 MONSTER = 3
-TCPS = 10  # time cost per step
+TCPS = 1  # time cost per step
+GOLD = 20
 DEATH_COST = 100000
 DELAY_TIME = 0.5
 # --------------------------------------------Initial things-----------------------------
@@ -65,7 +66,7 @@ class Player(turtle.Turtle):
         move_to_y = self.ycor() + 24
         self.shape("..\\images\\gif\\pacman_up.gif")
         if (move_to_x, move_to_y) not in walls:
-            self.position.y -= 1
+            self.position.x -= 1
             self.goto(move_to_x, move_to_y)
 
     def go_down(self):
@@ -74,7 +75,7 @@ class Player(turtle.Turtle):
         move_to_y = self.ycor() - 24
         self.shape("..\\images\\gif\\pacman_down.gif")
         if (move_to_x, move_to_y) not in walls:
-            self.position.y += 1
+            self.position.x += 1
             self.goto(move_to_x, move_to_y)
 
     def go_left(self):
@@ -83,7 +84,7 @@ class Player(turtle.Turtle):
         move_to_y = self.ycor()
         self.shape("..\\images\\gif\\pacman_left.gif")
         if (move_to_x, move_to_y) not in walls:
-            self.position.x -= 1
+            self.position.y -= 1
             self.goto(move_to_x, move_to_y)
 
     def go_right(self):
@@ -92,7 +93,7 @@ class Player(turtle.Turtle):
         move_to_y = self.ycor()
         self.shape("..\\images\\gif\\pacman_right.gif")
         if (move_to_x, move_to_y) not in walls:
-            self.position.x += 1
+            self.position.y += 1
             self.goto(move_to_x, move_to_y)
 
     def move(self, next_move: str = None):
@@ -255,7 +256,7 @@ class Treasure(turtle.Turtle):
         self.color('black')
         self.penup()
         self.speed(0)
-        self.gold = 100
+        self.gold = GOLD
         self.goto(x, y)
 
     def destroy(self):
@@ -351,9 +352,12 @@ def startGame(data: Maze, difficulty):
         if not died:
             # Think next move
             next_move = Level1.level1(maze, player.position, explored, ghost)
-
+            old_pos = player.position
             # Move
             player.move(next_move)
+            new_pos = player.position
+            if old_pos.position() == new_pos.position():
+                explored.pop()
             explored.append(player.position.position())
 
             for treasure in treasures:
@@ -403,4 +407,5 @@ if __name__ == "__main__":
     # maze.print_raw_data()
     # maze.print_entities()
     difficulty = 1
+    messagebox.showinfo()
     startGame(maze, difficulty)
