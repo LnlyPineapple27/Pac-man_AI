@@ -14,6 +14,7 @@ TREAT = 2
 MONSTER = 3
 TCPS = 10  # time cost per sec
 DEATH_COST = 100000
+DELAY_TIME = 0.2
 # --------------------------------------------Initial things-----------------------------
 window = turtle.Screen()
 root = turtle.Screen()._root
@@ -313,7 +314,7 @@ def startGame(data: Maze, difficulty):
     explored = [cur_pos]
 
     while treats_left or not died :
-        time.sleep(0.5)
+        time.sleep(DELAY_TIME)
         for enemy in enemies:
             if player.is_collision(enemy):
                 player.gold -= 1000
@@ -357,8 +358,8 @@ def startGame(data: Maze, difficulty):
                     print("Player died!!")
                     player.destroy()
                     died = True
-
-                enemy.move()
+                if difficulty != 2:
+                    enemy.move()
 
         # Update screen
         window.update()
