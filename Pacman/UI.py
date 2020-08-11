@@ -7,21 +7,20 @@ import time
 import random
 import Level1
 
-
 EMPTY = 0
 WALL = 1
 TREAT = 2
 MONSTER = 3
-TCPS = 10  # time cost per sec
+TCPS = 10  # time cost per step
 DEATH_COST = 100000
-DELAY_TIME = 0.2
+DELAY_TIME = 0.5
 # --------------------------------------------Initial things-----------------------------
 window = turtle.Screen()
 root = turtle.Screen()._root
 root.iconbitmap("..\\images\\icon\\Pacman.ico")
 window.bgcolor('black')
 window.title('AI Pacman')
-window.setup(width = 1000, height = 810, startx = 0, starty = 10)
+window.setup(width=1000, height=810, startx=0, starty=10)
 window.tracer(0)
 # --------------------------------------------------
 images = ["..\\images\\gif\\Blue_left.gif",
@@ -40,6 +39,7 @@ images = ["..\\images\\gif\\Blue_left.gif",
 for img in images:
     turtle.register_shape(img)
 
+
 class Wall(turtle.Turtle):
     def __init__(self):
         turtle.Turtle.__init__(self)
@@ -50,8 +50,9 @@ class Wall(turtle.Turtle):
 
 
 class Player(turtle.Turtle):
-    def __init__(self):
+    def __init__(self, init_pos: Point = None):
         turtle.Turtle.__init__(self)
+        self.position = init_pos if init_pos else Point()
         self.shape("..\\images\\gif\\pacman_right.gif")
         self.color('gold')
         self.penup()
@@ -64,6 +65,7 @@ class Player(turtle.Turtle):
         move_to_y = self.ycor() + 24
         self.shape("..\\images\\gif\\pacman_up.gif")
         if (move_to_x, move_to_y) not in walls:
+            self.position.y -= 1
             self.goto(move_to_x, move_to_y)
 
     def go_down(self):
@@ -72,6 +74,7 @@ class Player(turtle.Turtle):
         move_to_y = self.ycor() - 24
         self.shape("..\\images\\gif\\pacman_down.gif")
         if (move_to_x, move_to_y) not in walls:
+            self.position.y += 1
             self.goto(move_to_x, move_to_y)
 
     def go_left(self):
@@ -80,6 +83,7 @@ class Player(turtle.Turtle):
         move_to_y = self.ycor()
         self.shape("..\\images\\gif\\pacman_left.gif")
         if (move_to_x, move_to_y) not in walls:
+            self.position.x -= 1
             self.goto(move_to_x, move_to_y)
 
     def go_right(self):
@@ -88,7 +92,20 @@ class Player(turtle.Turtle):
         move_to_y = self.ycor()
         self.shape("..\\images\\gif\\pacman_right.gif")
         if (move_to_x, move_to_y) not in walls:
+            self.position.x += 1
             self.goto(move_to_x, move_to_y)
+
+    def move(self, next_move: str = None):
+        if next_move == "Up":
+            self.go_up()
+        elif next_move == "Down":
+            self.go_down()
+        elif next_move == "Left":
+            self.go_left()
+        elif next_move == "Right":
+            self.go_right()
+        else:
+            pass
 
     def exit(self):
         self.goto(self.xcor(), self.ycor())
@@ -127,7 +144,7 @@ class Enemy(turtle.Turtle):
         self.speed(0)
         # self.gold = 25
         self.goto(x, y)
-        #self.direction = random.choice(["up", "down", "right", "left"])
+        # self.direction = random.choice(["up", "down", "right", "left"])
         self.direction_to_init = None
         self.rotate = 0
 
@@ -203,7 +220,7 @@ class Enemy(turtle.Turtle):
 
     def move(self):
         if self.direction_to_init == None:
-            #clock-wise move-ment
+            # clock-wise move-ment
             directions_list = ["up", "right", "down", "left"]
             count = 0
             i = self.rotate
@@ -256,16 +273,17 @@ player = Player()
 
 # start position of character
 def setup_maze(board, difficulty, init_index):
+    player.position = init_index
+    print(player.position.position())
 
-    init_col = init_index.x
-    init_row = init_index.y
+    val_x = 400
+    val_y = 350
     for i in range(len(board)):
         for j in range(len(board[i])):
             # get the character of each x,y coord
 
             unity = board[i][j]
-            val_x = 400
-            val_y = 350
+
             # 288
             screen_x = ((-1) * val_x) + (j * 24)
             screen_y = val_y - (i * 24)
@@ -285,16 +303,23 @@ def setup_maze(board, difficulty, init_index):
                 num = len(enemies)
                 enemies.append(Enemy(screen_x, screen_y, num))
     # print Player according to its given location
-    player.goto(((-1) * val_x) + (init_col * 24), val_y - (init_row * 24))
+    player.goto(((-1) * val_x) + (player.position.y * 24), val_y - (player.position.x * 24))
+    # :)
+    window.update()
+
+
 
 
 def score_evaluation(gold, died, total_time):
     dc = DEATH_COST if died else 0
     return gold - dc - total_time * TCPS
 
+
 def endGame():
     print("[Game closed]")
     sys.exit()
+
+
 def startGame(data: Maze, difficulty):
     step = 1
     start_time = time.time()
@@ -306,39 +331,30 @@ def startGame(data: Maze, difficulty):
     turtle.onkey(player.go_right, 'Right')
     turtle.onkey(player.go_left, 'Left')
     """
-
-
-    treats_left = len(treasures)
+    treats_left = len(maze.treats)
     died = False
-    cur_pos = maze.pacman_init_position
-    explored = [cur_pos]
-
-    while treats_left or not died :
+    explored = [player.position]
+    ghost = difficulty >= 1
+    while treats_left or not died:
+        # Time delay
         time.sleep(DELAY_TIME)
+
+        # Check collision
         for enemy in enemies:
             if player.is_collision(enemy):
-                player.gold -= 1000
+                player.gold -= DEATH_COST
                 print("Player died!!")
                 player.destroy()
                 died = True
 
+        # Check alive
         if not died:
+            # Think next move
+            next_move = Level1.level1(maze, player.position, explored, ghost)
 
-            next_move = Level1.level1(maze, cur_pos, explored, True)
-            if next_move == "Up":
-                cur_pos.x -= 1
-                player.go_up()
-            elif next_move == "Down":
-                cur_pos.x += 1
-                player.go_down()
-            elif next_move == "Left":
-                cur_pos.y -= 1
-                player.go_left()
-            else:
-                cur_pos.y += 1
-                player.go_right()
-            explored.append(cur_pos.position())
-
+            # Move
+            player.move(next_move)
+            explored.append(player.position.position())
 
             for treasure in treasures:
                 if player.is_collision(treasure):
@@ -362,8 +378,8 @@ def startGame(data: Maze, difficulty):
                     enemy.move()
 
         # Update screen
+
         window.update()
-        # check goal
         if not treats_left or died:
             print("END game")
             end_time = time.time()
@@ -376,14 +392,15 @@ def startGame(data: Maze, difficulty):
             endGame()
         step += 1
 
-    #turtle.exitonclick()
+    # turtle.exitonclick()
     endGame()
+
 
 if __name__ == "__main__":
     input_list = InputHandle()
     input_list.items()
-    maze = input_list.get_maze("data3.txt")
+    maze = input_list.get_maze("lv1.txt")
     # maze.print_raw_data()
     # maze.print_entities()
-    difficulty = 3
+    difficulty = 1
     startGame(maze, difficulty)
