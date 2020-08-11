@@ -73,7 +73,7 @@ class Player(turtle.Turtle):
     def go_down(self):
         print("-- Pacman go down")
         move_to_x = self.xcor()
-        move_to_y = self.ycor() - 24
+        move_to_y = self.ycor()
         self.shape("..\\images\\gif\\pacman_down.gif")
         if (move_to_x, move_to_y) not in walls:
             self.position.x += 1
