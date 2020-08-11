@@ -1,9 +1,15 @@
 from Maze import *
 
 
-def level1(map: Maze, cur_pos: Point, explored: list, ghost=False) -> str:  #map: Maze(rows, columns, m_data, p_man, treats)
+def can_move(maze: Maze, position: Point, explored: list, ghost: bool) -> bool:
+    entity = maze.maze_data[position.x][position.y]
+    print(position.position(), maze.ENTITY_NAME[entity])
+    return entity != maze.WALL and (entity != 3 or not ghost) and position.position() not in explored
+
+
+def level1(map: Maze, cur_pos: Point, explored: list, ghost=False) -> str:  # map: Maze(rows, columns, m_data, p_man, treats)
     goal = map.treats[0]
-    print(cur_pos.position())
+    print(cur_pos.position(), goal.position())
     up = Point(cur_pos.x - 1, cur_pos.y)
     down = Point(cur_pos.x + 1, cur_pos.y)
     left = Point(cur_pos.x, cur_pos.y - 1)
@@ -11,14 +17,14 @@ def level1(map: Maze, cur_pos: Point, explored: list, ghost=False) -> str:  #map
 
     distance = {}
     max_dist = map.M_col + map.N_row
-    up_unity = map.maze_data[up.x][up.y]
-    down_unity = map.maze_data[down.x][down.y]
-    left_unity = map.maze_data[left.x][left.y]
-    right_unity = map.maze_data[right.x][right.y]
-
-    distance["Up"] = up.manhattan_distance(goal) if up_unity != 1 and (up_unity != 3 or not ghost) and up.position() not in explored else max_dist
-    distance["Down"] = down.manhattan_distance(goal) if down_unity != 1 and (down_unity != 3 or not ghost) and down.position() not in explored else max_dist
-    distance["Left"] = left.manhattan_distance(goal) if left_unity != 1 and (left_unity != 3 or not ghost) and left.position() not in explored else max_dist
-    distance["Right"] = right.manhattan_distance(goal) if right_unity != 1 and (right_unity != 3 or not ghost) and right.position() not in explored else max_dist
+    print("Up: ",end=" ")
+    distance["Up"] = up.manhattan_distance(goal) if can_move(map, up, explored, ghost) else max_dist
+    print("Down: ", end=" ")
+    distance["Down"] = down.manhattan_distance(goal) if can_move(map, down, explored, ghost) else max_dist
+    print("Left: ", end=" ")
+    distance["Left"] = left.manhattan_distance(goal) if can_move(map, left, explored, ghost) else max_dist
+    print("Right: ", end=" ")
+    distance["Right"] = right.manhattan_distance(goal) if can_move(map, right, explored, ghost) else max_dist
     m = min(distance.items(), key=lambda x: x[1])
+    print(distance)
     return m[0]

@@ -14,7 +14,12 @@ ENTITY_NAME = ["Empty", "Wall", "Treat", "Monster"]
 
 
 class Maze:
-    def __init__(self, m_row=0, m_col=0, m_data=None, m_p_index=None, treats=None):
+    def __init__(self, m_row=0, m_col=0, m_data=None, m_p_index:Point=None, treats=None):
+        self.EMPTY = EMPTY
+        self.WALL = WALL
+        self.TREAT = TREAT
+        self.MONSTER = MONSTER
+        self.ENTITY_NAME = ENTITY_NAME
         self.N_row = m_row
         self.M_col = m_col
         self.maze_data = m_data
