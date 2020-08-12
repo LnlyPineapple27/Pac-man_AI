@@ -45,7 +45,6 @@ class InputHandle:
     """
     Store all of input file path
     """
-
     def __init__(self, input_dir=INPUT_DIR):
         self.path_list = {}
         with os.scandir(input_dir) as i:

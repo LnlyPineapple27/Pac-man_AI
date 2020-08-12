@@ -336,10 +336,11 @@ def startGame(data: Maze, difficulty):
     treats_left = len(maze.treats)
     died = False
     explored = [player.position.coordinate()]
-    ghost = difficulty >= 1
+    path = [player.position.coordinate()]
+    ghost = difficulty > 1
     dead_path = []
     step_level = 0
-    got_stuck = []
+
     while treats_left or not died:
         # Time delay
         time.sleep(DELAY_TIME)
@@ -357,21 +358,23 @@ def startGame(data: Maze, difficulty):
         if not died:
             # Think next move
             if difficulty < 3:
-                print("curpos", player.position.coordinate())
-                next_move = Level1.level1(maze, player.position, explored, dead_path, ghost)
+                print("current position:", player.position.coordinate())
+                next_move = Level1.level1(maze, player.position, path, dead_path, ghost)
                 # Move
                 cur_pos = player.position.coordinate()
                 if next_move == "Stuck":
                     print("Stuck")
                     dead_path.append(cur_pos)
-                    explored.pop()
-                    explored.pop()
+                    # remove current and node before to go back
+                    path.clear()
+                    #del path[-2:-1]
                 else:
                     player.move(next_move)
-                    explored.append(cur_pos)
+                    path.append(player.position.coordinate())
+                    explored.append(player.position.coordinate())
 
-                print("Dead path: ", dead_path)
-                print("Explored: ", explored)
+                #print("Dead path: ", dead_path)
+                #print("Explored: ", explored)
                 print("------------------------end")
             elif difficulty == 3:
                 print("Fisdi ")
@@ -407,7 +410,7 @@ def startGame(data: Maze, difficulty):
             total_time = int(end_time - start_time)
             score = score_evaluation(player.gold, died, total_time)
             mesg = "You WON" if not treats_left else "You DIED"
-            mesg += ", Score = {}, took {} seconds".format(score, step)
+            mesg += ", Score = {}, took {} step".format(score, step)
             print("[RESULT]:" + mesg)
             messagebox.showinfo("Congratulations!!!!", mesg)
             endGame()
@@ -420,9 +423,9 @@ def startGame(data: Maze, difficulty):
 if __name__ == "__main__":
     input_list = InputHandle()
     input_list.items()
-    maze = input_list.get_maze("lv1.txt")
+    maze = input_list.get_maze("data2.txt")
     # maze.print_raw_data()
     # maze.print_entities()
-    difficulty = 1
+    difficulty = 2
     messagebox.showinfo()
     startGame(maze, difficulty)

@@ -13,7 +13,7 @@ def check_stuck(maze: Maze, dead_pos: Point) -> bool:
 '''
 
 
-def level1(map: Maze, cur_pos: Point, explored: list, dead_path: list, ghost=False) -> str:
+def level1(map: Maze, cur_pos: Point, current_path: list, dead_node: list, ghost=False) -> str:
     goal = map.treats[0]
 
     up = Point(cur_pos.x - 1, cur_pos.y)
@@ -24,16 +24,15 @@ def level1(map: Maze, cur_pos: Point, explored: list, dead_path: list, ghost=Fal
     distance = {}
     max_dist = map.M_col + map.N_row
     #print("Up: ", end=" ")
-    distance["Up"] = up.manhattan_distance(goal) if can_move(map, up, explored, dead_path, ghost) else max_dist
+    distance["Up"] = up.manhattan_distance(goal) if can_move(map, up, current_path, dead_node, ghost) else max_dist
     #print("Down: ", end=" ")
-    distance["Down"] = down.manhattan_distance(goal) if can_move(map, down, explored, dead_path, ghost) else max_dist
+    distance["Down"] = down.manhattan_distance(goal) if can_move(map, down, current_path, dead_node, ghost) else max_dist
     #print("Left: ", end=" ")
-    distance["Left"] = left.manhattan_distance(goal) if can_move(map, left, explored, dead_path, ghost) else max_dist
+    distance["Left"] = left.manhattan_distance(goal) if can_move(map, left, current_path, dead_node, ghost) else max_dist
     #print("Right: ", end=" ")
-    distance["Right"] = right.manhattan_distance(goal) if can_move(map, right, explored, dead_path, ghost) else max_dist
+    distance["Right"] = right.manhattan_distance(goal) if can_move(map, right, current_path, dead_node, ghost) else max_dist
 
     got_stuck = all([max_dist == vl for vl in distance.values()])
-    min_item = min(distance.items(), key=lambda x: x[1])
-    next_step = min_item[0] if not got_stuck else "Stuck"
+    next_step = min(distance.items(), key=lambda x: x[1])[0] if not got_stuck else "Stuck"
     #print(distance)
     return next_step
