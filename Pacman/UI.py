@@ -266,8 +266,8 @@ class Treasure(turtle.Turtle):
 
 
 # Global variable
-treasures = []
-enemies = []
+treats = []
+ghosts = []
 walls = ['']
 walls_block = Wall()
 player = Player()
@@ -299,17 +299,15 @@ def setup_maze(board, difficulty, init_index):
                 walls.append((screen_x, screen_y))
 
             if unity == TREAT:
-                treasures.append(Treasure(screen_x, screen_y))
+                treats.append(Treasure(screen_x, screen_y))
 
             if unity == MONSTER and difficulty != 1:
-                num = len(enemies)
-                enemies.append(Enemy(screen_x, screen_y, num))
+                num = len(ghosts)
+                ghosts.append(Enemy(screen_x, screen_y, num))
     # print Player according to its given location
     player.goto(((-1) * val_x) + (player.position.y * 24), val_y - (player.position.x * 24))
     # :)
     window.update()
-
-
 
 
 def score_evaluation(gold, died, total_time):
@@ -346,8 +344,8 @@ def startGame(data: Maze, difficulty):
         time.sleep(DELAY_TIME)
         #input("HAHA")
         # Check collision
-        for enemy in enemies:
-            if player.is_collision(enemy):
+        for ghost in ghosts:
+            if player.is_collision(ghost):
                 player.gold -= DEATH_COST
                 print("Player died!!")
                 player.destroy()
@@ -382,10 +380,10 @@ def startGame(data: Maze, difficulty):
                 path.append(player.position.coordinate())
                 explored.append(player.position.coordinate())
 
-            for treasure in treasures:
-                if player.is_collision(treasure):
-                    # Add the treasure gold to the player gold
-                    player.gold += treasure.gold
+            for treat in treats:
+                if player.is_collision(treat):
+                    # Add the treat gold to the player gold
+                    player.gold += treat.gold
                     print('Player Gold: {}'.format(player.gold))
                     #
 
@@ -393,19 +391,19 @@ def startGame(data: Maze, difficulty):
 
                     if not maze.treats:
                         treats_left = False
-                    # Destroy the treasure
-                    treasure.destroy()
-                    # Remove the treasure
-                    treasures.remove(treasure)
+                    # Destroy the treat
+                    treat.destroy()
+                    # Remove the treat
+                    treats.remove(treat)
             # double check
-            for enemy in enemies:
-                if player.is_collision(enemy):
+            for ghost in ghosts:
+                if player.is_collision(ghost):
                     player.gold -= 1000
                     print("Player died!!")
                     player.destroy()
                     died = True
                 if difficulty != 2:
-                    enemy.move()
+                    ghost.move()
 
         step_level += 1
         # Update screen
