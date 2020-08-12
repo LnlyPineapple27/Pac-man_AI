@@ -355,16 +355,19 @@ def startGame(data: Maze, difficulty):
             if difficulty < 3:
 
                 next_move = Level1.level1(maze, player.position, explored, ghost)
-                old_pos = player.position
-                # Move
-                player.move(next_move)
-                new_pos = player.position
-                if old_pos.position() == new_pos.position():
-                    explored.pop()
-                explored.append(player.position.position())
             elif difficulty == 3:
-                print("Fisdi ")
+                print("----------------TESTZONE ")
                 next_move = Level3.level3(maze, player.position, explored)
+
+            old_pos = player.position
+            # Move
+            player.move(next_move)
+            new_pos = player.position
+            if old_pos.position() == new_pos.position():
+                explored.pop()
+            explored.append(player.position.position())
+
+
             for treasure in treasures:
                 if player.is_collision(treasure):
                     # Desc treats left
