@@ -15,7 +15,7 @@ MONSTER = 3
 TCPS = 1  # time cost per step
 GOLD = 20
 DEATH_COST = 100000
-DELAY_TIME = 0.5
+DELAY_TIME = 0.2
 # --------------------------------------------Initial things-----------------------------
 window = turtle.Screen()
 root = turtle.Screen()._root
@@ -408,7 +408,7 @@ def startGame(data: Maze, difficulty):
             print("END game")
             end_time = time.time()
             total_time = int(end_time - start_time)
-            score = score_evaluation(player.gold, died, total_time)
+            score = score_evaluation(player.gold, died, step)
             mesg = "You WON" if not treats_left else "You DIED"
             mesg += ", Score = {}, took {} step".format(score, step)
             print("[RESULT]:" + mesg)
@@ -423,9 +423,9 @@ def startGame(data: Maze, difficulty):
 if __name__ == "__main__":
     input_list = InputHandle()
     input_list.items()
-    maze = input_list.get_maze("data2.txt")
+    maze = input_list.get_maze("Stuckin.txt")
     # maze.print_raw_data()
     # maze.print_entities()
-    difficulty = 2
-    messagebox.showinfo()
+    difficulty = 1
+    messagebox.showinfo("UI will started!!","Click ok to start!!!")
     startGame(maze, difficulty)
