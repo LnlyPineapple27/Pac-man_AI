@@ -1,4 +1,9 @@
 from Maze import *
+import random
+
+def can_move(map: Maze, cur_pos: Point):
+    return map.maze_data[cur_pos.y][cur_pos.x] != map.WALL:
+
 
 
 def get_sub_list(start1, end1, start2, end2, list2d):
@@ -14,7 +19,19 @@ def level3(map: Maze, cur_pos: Point, explored: list):
     # print ("start 2: ", start_2, "end 2:", end_2)
 
     vision = get_sub_list(start_1, end_1, start_2, end_2, map.maze_data)
-    print(vision)
-    return 0
-    # create an empty map
+    found_list = [item for item in maze.treats if vision[item.y][item.x] == Maze.TREAT]
+    directions = []
+    if can_move(map, cur_pos.up()):
+        directions.append("Up")
+    if can_move(map,cur_pos.down()):
+        directions.append("Down")
+    if can_move(map,cur_pos.left()):
+        directions.append("Left")
+    if can_move(map,cur_pos.right()):
+        directions.append("Right")
+
+    if not found_list:
+        return random.choice(directions)
+    else:
+
 
