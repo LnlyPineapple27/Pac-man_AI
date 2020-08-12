@@ -7,6 +7,9 @@ class Point:
         self.x = x
         self.y = y
 
+    def __eq__(self, another):
+        return self.x == another.x and self.y == another.y
+
     def manhattan_distance(self, another):
         return abs(self.x - another.x) + abs(self.y - another.y)
 

@@ -333,7 +333,7 @@ def startGame(data: Maze, difficulty):
     turtle.onkey(player.go_right, 'Right')
     turtle.onkey(player.go_left, 'Left')
     """
-    treats_left = len(maze.treats)
+    treats_left = bool(maze.treats)
     died = False
     explored = [player.position.coordinate()]
     path = [player.position.coordinate()]
@@ -355,37 +355,44 @@ def startGame(data: Maze, difficulty):
 
         # Check alive
         print("------------------------Step level: ", step)
+        print("Position:", player.position.coordinate())
         if not died:
             # Think next move
             if difficulty < 3:
                 print("current position:", player.position.coordinate())
                 next_move = Level1.level1(maze, player.position, path, dead_path, ghost)
                 # Move
-                cur_pos = player.position.coordinate()
-                if next_move == "Stuck":
-                    print("Stuck")
-                    dead_path.append(cur_pos)
-                    # remove current and node before to go back
-                    path.clear()
-                    #del path[-2:-1]
-                else:
-                    player.move(next_move)
-                    path.append(player.position.coordinate())
-                    explored.append(player.position.coordinate())
-
                 #print("Dead path: ", dead_path)
                 #print("Explored: ", explored)
                 print("------------------------end")
             elif difficulty == 3:
-                print("Fisdi ")
-                next_move = Level3.level3(maze, player.position, explored)
+                next_move = Level3.level3(maze, player.position, path, dead_path)
+            else:
+                next_move = "Nah???"
+
+            cur_pos = player.position.coordinate()
+            if next_move == "Stuck":
+                print("Stuck")
+                dead_path.append(cur_pos)
+                # remove current and node before to go back
+                path.clear()
+                # del path[-2:-1]
+            else:
+                player.move(next_move)
+                path.append(player.position.coordinate())
+                explored.append(player.position.coordinate())
+
             for treasure in treasures:
                 if player.is_collision(treasure):
-                    # Desc treats left
-                    treats_left -= 1
                     # Add the treasure gold to the player gold
                     player.gold += treasure.gold
                     print('Player Gold: {}'.format(player.gold))
+                    #
+
+                    maze.treats.remove(player.position)
+
+                    if not maze.treats:
+                        treats_left = False
                     # Destroy the treasure
                     treasure.destroy()
                     # Remove the treasure

@@ -14,7 +14,7 @@ ENTITY_NAME = ["Empty", "Wall", "Treat", "Monster"]
 
 
 class Maze:
-    def __init__(self, m_row=0, m_col=0, m_data=None, m_p_index:Point=None, treats=None):
+    def __init__(self, m_row=0, m_col=0, m_data=None, m_p_index: Point = None, treats=None):
         self.EMPTY = EMPTY
         self.WALL = WALL
         self.TREAT = TREAT
@@ -45,6 +45,7 @@ class InputHandle:
     """
     Store all of input file path
     """
+
     def __init__(self, input_dir=INPUT_DIR):
         self.path_list = {}
         with os.scandir(input_dir) as i:
