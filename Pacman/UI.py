@@ -335,8 +335,10 @@ def startGame(data: Maze, difficulty):
     """
     treats_left = len(maze.treats)
     died = False
-    explored = [player.position]
+    explored = [player.position.position()]
     ghost = difficulty >= 1
+    dead_path = []
+    step_level = 0
     while treats_left or not died:
         # Time delay
         time.sleep(DELAY_TIME)
@@ -350,24 +352,29 @@ def startGame(data: Maze, difficulty):
                 died = True
 
         # Check alive
+        print("Step level: ", step)
         if not died:
             # Think next move
             if difficulty < 3:
 
-                next_move = Level1.level1(maze, player.position, explored, ghost)
+                next_move = Level1.level1(maze, player.position, explored, dead_path, ghost)
+                # Move
+                cur_pos = player.position.position()
+                if next_move == "Stuck":
+                    print("Stuck")
+                    dead_path.append(cur_pos)
+                    explored.pop()
+                    explored.pop()
+                else:
+                    player.move(next_move)
+                    explored.append(player.position.position())
+
+                print("Dead path: ", dead_path)
+                print("Explored: ", explored)
+
             elif difficulty == 3:
-                print("----------------TESTZONE ")
+                print("Fisdi ")
                 next_move = Level3.level3(maze, player.position, explored)
-
-            old_pos = player.position
-            # Move
-            player.move(next_move)
-            new_pos = player.position
-            if old_pos.position() == new_pos.position():
-                explored.pop()
-            explored.append(player.position.position())
-
-
             for treasure in treasures:
                 if player.is_collision(treasure):
                     # Desc treats left
@@ -389,6 +396,7 @@ def startGame(data: Maze, difficulty):
                 if difficulty != 2:
                     enemy.move()
 
+        step_level += 1
         # Update screen
 
         window.update()
@@ -414,6 +422,6 @@ if __name__ == "__main__":
     maze = input_list.get_maze("lv1.txt")
     # maze.print_raw_data()
     # maze.print_entities()
-    difficulty = 3
+    difficulty = 1
     messagebox.showinfo()
     startGame(maze, difficulty)
