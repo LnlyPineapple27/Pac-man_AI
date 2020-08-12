@@ -126,7 +126,7 @@ class Player(turtle.Turtle):
         self.hideturtle()
 
 
-class Enemy(turtle.Turtle):
+class Ghost(turtle.Turtle):
     def __init__(self, x, y, num):
         turtle.Turtle.__init__(self)
         self.num = num
@@ -303,7 +303,7 @@ def setup_maze(board, difficulty, init_index):
 
             if unity == MONSTER and difficulty != 1:
                 num = len(ghosts)
-                ghosts.append(Enemy(screen_x, screen_y, num))
+                ghosts.append(Ghost(screen_x, screen_y, num))
     # print Player according to its given location
     player.goto(((-1) * val_x) + (player.position.y * 24), val_y - (player.position.x * 24))
     # :)
@@ -313,6 +313,14 @@ def setup_maze(board, difficulty, init_index):
 def score_evaluation(gold, died, total_time):
     dc = DEATH_COST if died else 0
     return gold - dc - total_time * TCPS
+
+
+def show_score(step, died, treats_left):
+    score = score_evaluation(player.gold, died, step)
+    mesg = "You WON" if not treats_left else "You DIED"
+    mesg += ", Score = {}, took {} step".format(score, step)
+    print("[RESULT]:" + mesg)
+    messagebox.showinfo("Congratulations!!!!", mesg)
 
 
 def endGame():
@@ -386,7 +394,7 @@ def startGame(data: Maze, difficulty):
                     player.gold += treat.gold
                     print('Player Gold: {}'.format(player.gold))
                     #
-
+                    maze.maze_data[player.position.x][player.position.y] = 0
                     maze.treats.remove(player.position)
 
                     if not maze.treats:
@@ -413,11 +421,7 @@ def startGame(data: Maze, difficulty):
             print("END game")
             end_time = time.time()
             total_time = int(end_time - start_time)
-            score = score_evaluation(player.gold, died, step)
-            mesg = "You WON" if not treats_left else "You DIED"
-            mesg += ", Score = {}, took {} step".format(score, step)
-            print("[RESULT]:" + mesg)
-            messagebox.showinfo("Congratulations!!!!", mesg)
+            show_score(step, died, treats_left)
             endGame()
         step += 1
 
@@ -431,6 +435,6 @@ if __name__ == "__main__":
     maze = input_list.get_maze("Stuckin.txt")
     # maze.print_raw_data()
     # maze.print_entities()
-    difficulty = 1
-    messagebox.showinfo("UI will started!!","Click ok to start!!!")
+    difficulty = 3
+    #messagebox.showinfo("UI will started!!","Click ok to start!!!")
     startGame(maze, difficulty)
