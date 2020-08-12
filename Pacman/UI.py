@@ -22,10 +22,12 @@ root = turtle.Screen()._root
 root.iconbitmap("..\\images\\icon\\Pacman.ico")
 window.bgcolor('black')
 window.title('AI Pacman')
-window.setup(width=1000, height=810, startx=0, starty=10)
+window.setup(width=1000, height=810, startx=0, starty=20)
 window.tracer(0)
 # --------------------------------------------------
-images = ["..\\images\\gif\\Blue_left.gif",
+images = ["..\\images\\gif\\White_left.gif",
+          "..\\images\\gif\\White_right.gif",
+          "..\\images\\gif\\Blue_left.gif",
           "..\\images\\gif\\Red_left.gif",
           "..\\images\\gif\\Pink_left.gif",
           "..\\images\\gif\\Orange_left.gif",
@@ -130,7 +132,6 @@ class Ghost(turtle.Turtle):
     def __init__(self, x, y, num):
         turtle.Turtle.__init__(self)
         self.num = num
-        self.shape('triangle')
 
         if self.num == 0:
             self.shape("..\\images\\gif\\Blue_left.gif")
@@ -140,6 +141,8 @@ class Ghost(turtle.Turtle):
             self.shape("..\\images\\gif\\Pink_left.gif")
         elif self.num == 3:
             self.shape("..\\images\\gif\\Red_left.gif")
+        else:
+            self.shape("..\\images\\gif\\White_left.gif")
 
         self.color("green")
         self.penup()
@@ -171,6 +174,8 @@ class Ghost(turtle.Turtle):
                 self.shape("..\\images\\gif\\Pink_right.gif")
             elif self.num == 3:
                 self.shape("..\\images\\gif\\Red_right.gif")
+            else:
+                self.shape("..\\images\\gif\\White_right.gif")
         elif direction == "left":
             move_to_x -= 24
             if self.num == 0:
@@ -181,6 +186,8 @@ class Ghost(turtle.Turtle):
                 self.shape("..\\images\\gif\\Pink_left.gif")
             elif self.num == 3:
                 self.shape("..\\images\\gif\\Red_left.gif")
+            else:
+                self.shape("..\\images\\gif\\White_left.gif")
 
         if (move_to_x, move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
@@ -204,6 +211,8 @@ class Ghost(turtle.Turtle):
                 self.shape("..\\images\\gif\\Pink_right.gif")
             elif self.num == 3:
                 self.shape("..\\images\\gif\\Red_right.gif")
+            else:
+                self.shape("..\\images\\gif\\White_right.gif")
         elif direction == "right":
             move_to_x -= 24
             if self.num == 0:
@@ -214,6 +223,8 @@ class Ghost(turtle.Turtle):
                 self.shape("..\\images\\gif\\Pink_left.gif")
             elif self.num == 3:
                 self.shape("..\\images\\gif\\Red_left.gif")
+            else:
+                self.shape("..\\images\\gif\\White_left.gif")
 
         if (move_to_x, move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
@@ -276,32 +287,26 @@ player = Player()
 # start position of character
 def setup_maze(board, difficulty, init_index):
     player.position = init_index
-    print(player.position.coordinate())
-
+    print("[Player's initial position]:",player.position.coordinate())
+    # 288
     val_x = 400
     val_y = 350
     for i in range(len(board)):
         for j in range(len(board[i])):
             # get the character of each x,y coord
-
             unity = board[i][j]
-
-            # 288
             screen_x = ((-1) * val_x) + (j * 24)
             screen_y = val_y - (i * 24)
             # printing the maze
-
             if unity == WALL:
                 walls_block.goto(screen_x, screen_y)
                 # walls_block.shape('Wall.gif')
                 walls_block.stamp()
                 # Add co-ordinates to list
                 walls.append((screen_x, screen_y))
-
-            if unity == TREAT:
+            elif unity == TREAT:
                 treats.append(Treasure(screen_x, screen_y))
-
-            if unity == MONSTER and difficulty != 1:
+            elif unity == MONSTER and difficulty != 1:
                 num = len(ghosts)
                 ghosts.append(Ghost(screen_x, screen_y, num))
     # print Player according to its given location
