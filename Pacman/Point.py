@@ -13,7 +13,7 @@ class Point:
     def euclid_distant(self, another):
         return math.sqrt((self.x - another.x)**2 + (self.y - another.y)**2)
 
-    def position(self):
+    def coordinate(self):
         return cp.copy(self.x), cp.copy(self.y)
 
     def up(self):

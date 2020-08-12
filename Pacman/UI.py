@@ -62,7 +62,7 @@ class Player(turtle.Turtle):
         self.gold = 0
 
     def go_up(self):
-        print("-- Pacman go up")
+        print("Pacman go up")
         move_to_x = self.xcor()
         move_to_y = self.ycor() + 24
         self.shape("..\\images\\gif\\pacman_up.gif")
@@ -71,16 +71,16 @@ class Player(turtle.Turtle):
             self.goto(move_to_x, move_to_y)
 
     def go_down(self):
-        print("-- Pacman go down")
+        print("Pacman go down")
         move_to_x = self.xcor()
-        move_to_y = self.ycor()
+        move_to_y = self.ycor() - 24
         self.shape("..\\images\\gif\\pacman_down.gif")
         if (move_to_x, move_to_y) not in walls:
             self.position.x += 1
             self.goto(move_to_x, move_to_y)
 
     def go_left(self):
-        print("-- Pacman go left")
+        print("Pacman go left")
         move_to_x = self.xcor() - 24
         move_to_y = self.ycor()
         self.shape("..\\images\\gif\\pacman_left.gif")
@@ -89,7 +89,7 @@ class Player(turtle.Turtle):
             self.goto(move_to_x, move_to_y)
 
     def go_right(self):
-        print("-- Pacman go right")
+        print("Pacman go right")
         move_to_x = self.xcor() + 24
         move_to_y = self.ycor()
         self.shape("..\\images\\gif\\pacman_right.gif")
@@ -276,7 +276,7 @@ player = Player()
 # start position of character
 def setup_maze(board, difficulty, init_index):
     player.position = init_index
-    print(player.position.position())
+    print(player.position.coordinate())
 
     val_x = 400
     val_y = 350
@@ -335,14 +335,15 @@ def startGame(data: Maze, difficulty):
     """
     treats_left = len(maze.treats)
     died = False
-    explored = [player.position.position()]
+    explored = [player.position.coordinate()]
     ghost = difficulty >= 1
     dead_path = []
     step_level = 0
+    got_stuck = []
     while treats_left or not died:
         # Time delay
         time.sleep(DELAY_TIME)
-
+        #input("HAHA")
         # Check collision
         for enemy in enemies:
             if player.is_collision(enemy):
@@ -352,14 +353,14 @@ def startGame(data: Maze, difficulty):
                 died = True
 
         # Check alive
-        print("Step level: ", step)
+        print("------------------------Step level: ", step)
         if not died:
             # Think next move
             if difficulty < 3:
-
+                print("curpos", player.position.coordinate())
                 next_move = Level1.level1(maze, player.position, explored, dead_path, ghost)
                 # Move
-                cur_pos = player.position.position()
+                cur_pos = player.position.coordinate()
                 if next_move == "Stuck":
                     print("Stuck")
                     dead_path.append(cur_pos)
@@ -367,11 +368,11 @@ def startGame(data: Maze, difficulty):
                     explored.pop()
                 else:
                     player.move(next_move)
-                    explored.append(player.position.position())
+                    explored.append(cur_pos)
 
                 print("Dead path: ", dead_path)
                 print("Explored: ", explored)
-
+                print("------------------------end")
             elif difficulty == 3:
                 print("Fisdi ")
                 next_move = Level3.level3(maze, player.position, explored)
