@@ -16,22 +16,22 @@ class Point:
     def position(self):
         return cp.copy(self.x), cp.copy(self.y)
 
-    def Up(self):
+    def up(self):
         cp_pnt = cp.deepcopy(self)
         cp_pnt.x -= 1
         return cp_pnt
     
-    def Down(self):
+    def down(self):
         cp_pnt = cp.deepcopy(self)
         cp_pnt.x += 1
         return cp_pnt
 
-    def Left(self):
+    def left(self):
         cp_pnt = cp.deepcopy(self)
         cp_pnt.y -= 1
         return cp_pnt
 
-    def Right(self):
+    def right(self):
         cp_pnt = cp.deepcopy(self)
         cp_pnt.y += 1
         return cp_pnt
