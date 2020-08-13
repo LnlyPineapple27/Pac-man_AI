@@ -66,14 +66,16 @@ def find_ghost_in_vision(map: Maze,current_position: Point):
 
 
 
-def level3(map: Maze, cur_pos: Point, path: list, dead_node:list):
+def level3(map: Maze, cur_pos: Point, path: list, dead_node:list, ghost_appearance: list):
     # print ("start 1: ", start_1, "end 1:", end_1)
     # print ("start 2: ", start_2, "end 2:", end_2)
+    #GHOST_ENCOUNTER = (map.N_row + map.M_col)/3
     vision_map, r1, r2 = vision(map, cur_pos)
     print("Map:")
     vision_map.print_raw_data()
     print("Treats: ", [item.coordinate() for item in vision_map.treats])
     ghosts_in_vision = find_ghost_in_vision(map, cur_pos)
+
     if ghosts_in_vision:
         directions = []
         if can_move(map, cur_pos.up(), path, dead_node):
@@ -94,8 +96,12 @@ def level3(map: Maze, cur_pos: Point, path: list, dead_node:list):
         down = cur_pos.down()
         left = cur_pos.left()
         right = cur_pos.right()
+
         for ghost in ghosts_in_vision:
-            print("ghost location:",ghost.coordinate())
+            if ghost not in ghost_appearance:
+                ghost_appearance.append(ghost)
+
+
             for path in directions:
                 if path == "Up":
                     next_location = cur_pos.up()
@@ -108,8 +114,13 @@ def level3(map: Maze, cur_pos: Point, path: list, dead_node:list):
 
                 distance[path] += next_location.manhattan_distance(ghost)
 
+                if next_location not in ghost_appearance:
+                    distance[path] += 10
+
+            print("--------------------------------CALCULATION:",distance)
             got_stuck = all([min_dist == vl for vl in distance.values()])
             next_step = max(distance.items(), key=lambda x: x[1])[0] if not got_stuck else "Stuck"
+
             return next_step
     else:
         if not vision_map.treats:

@@ -351,6 +351,7 @@ def startGame(data: Maze, difficulty):
     ghost = difficulty > 1
     dead_path = []
     step_level = 0
+    ghost_appearance = []
 
     while treats_left or not died:
         # Time delay
@@ -377,7 +378,8 @@ def startGame(data: Maze, difficulty):
                 #print("Explored: ", explored)
                 print("------------------------end")
             elif difficulty == 3:
-                next_move = Level3.level3(maze, player.position, path, dead_path)
+                next_move = Level3.level3(maze, player.position, path, dead_path, ghost_appearance)
+                print("--------------ghosts location:\n", [i.coordinate() for i in ghost_appearance])
             else:
                 next_move = "Nah???"
 
