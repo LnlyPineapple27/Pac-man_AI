@@ -77,7 +77,7 @@ def level3(map: Maze, cur_pos: Point, path: list, dead_node:list):
     if ghosts_in_vision:
         directions = []
         if can_move(map, cur_pos.up(), path, dead_node):
-                directions.append("Up")
+            directions.append("Up")
         if can_move(map, cur_pos.down(), path, dead_node):
             directions.append("Down")
         if can_move(map, cur_pos.left(), path, dead_node):
