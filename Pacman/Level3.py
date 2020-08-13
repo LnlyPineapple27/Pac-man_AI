@@ -48,7 +48,7 @@ def vision(map: Maze, current_position: Point) -> (Maze, list, list):
     new_pos = evaluate_point(current_position, start_1, start_2)
     return Maze(map.N_row, map.M_col, vi, new_pos, treats), row_range, col_range
 
-
+'''
 def find_ghost_in_vision(vision_map: Maze, current_position: Point):
     ghost_list = []
     for i in range(vision_map.N_row):
@@ -56,9 +56,22 @@ def find_ghost_in_vision(vision_map: Maze, current_position: Point):
             if vision_map.maze_data[i][j] == vision_map.MONSTER:
                 ghost_list.append(Point(current_position.x - 2 + i, current_position.y - 2 + j))
     return ghost_list
+'''
+# chua fix lai row_range, col_range cua ham vision, ham find_ghost_in_vision con dang bi out of range
+def find_ghost_in_vision(vision_map: Maze, current_position: Point, row_range, col_range):
+    ghost_list = []
+
+    print("Range: ", "row: ", row_range, "col: ", col_range)
+    for i in row_range:
+        for j in col_range:
+            print("Hi", i - row_range[0], j - col_range[0])
+            print("value: ", vision_map.maze_data[i - row_range[0]][j - col_range[0]])
+            if vision_map.maze_data[i - row_range[0]][j - col_range[0]] == vision_map.MONSTER:
+                ghost_list.append(Point(i, j))
+    return ghost_list
 
 
-def level3(map: Maze, cur_pos: Point, path: list, dead_node:list, ghost_appearance: list):
+def level3(map: Maze, cur_pos: Point, path: list, dead_node: list, ghost_appearance: list):
     # print ("start 1: ", start_1, "end 1:", end_1)
     # print ("start 2: ", start_2, "end 2:", end_2)
     # GHOST_ENCOUNTER = (map.N_row + map.M_col)/3
@@ -66,7 +79,8 @@ def level3(map: Maze, cur_pos: Point, path: list, dead_node:list, ghost_appearan
     print("Vision Map:")
     vision_map.print_raw_data()
     print("Treats: ", [item.coordinate() for item in vision_map.treats])
-    ghosts_in_vision = find_ghost_in_vision(map, cur_pos)
+    #ghosts_in_vision = find_ghost_in_vision(vision_map, cur_pos)
+    ghosts_in_vision = find_ghost_in_vision(vision_map, cur_pos, r1, r2)
     if not vision_map.treats:
         # food in vision
         if ghosts_in_vision:
