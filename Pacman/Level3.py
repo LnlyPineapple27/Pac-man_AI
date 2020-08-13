@@ -49,6 +49,23 @@ def vision(map: Maze, current_position: Point) -> (Maze, list, list):
     return Maze(map.N_row, map.M_col, vi, new_pos, treats), row_range, col_range
 
 
+def find_ghost_in_vision(map: Maze,current_position: Point):
+    ghost_list = []
+    start_1 = current_position.x - 2 if current_position.x - 2 >= 0 else 0
+    end_1 = current_position.x + 2 if current_position.x + 2 < map.N_row else map.N_row
+    start_2 = current_position.y - 2 if current_position.y - 2 >= 0 else 0
+    end_2 = current_position.y + 2 if current_position.y + 2 < map.M_col else map.M_col
+
+    view = get_sub_list(start_1, end_1, start_2, end_2, map.maze_data)
+    for i in range(len(view)):
+        for j in range(len(view[i])):
+            if view[i][j] == map.MONSTER:
+                ghost_list.append(Point(current_position.x - 2 + i, current_position.y - 2 + j))
+
+    return ghost_list
+
+
+
 def level3(map: Maze, cur_pos: Point, path: list, dead_node:list):
     # print ("start 1: ", start_1, "end 1:", end_1)
     # print ("start 2: ", start_2, "end 2:", end_2)
@@ -56,22 +73,61 @@ def level3(map: Maze, cur_pos: Point, path: list, dead_node:list):
     print("Map:")
     vision_map.print_raw_data()
     print("Treats: ", [item.coordinate() for item in vision_map.treats])
-    if not vision_map.treats:
+    ghosts_in_vision = find_ghost_in_vision(map, cur_pos)
+    if ghosts_in_vision:
         directions = []
-        print("rand")
         if can_move(map, cur_pos.up(), path, dead_node):
-            directions.append("Up")
+                directions.append("Up")
         if can_move(map, cur_pos.down(), path, dead_node):
             directions.append("Down")
         if can_move(map, cur_pos.left(), path, dead_node):
             directions.append("Left")
         if can_move(map, cur_pos.right(), path, dead_node):
             directions.append("Right")
-        print(directions)
-        return random.choice(directions) if directions else "Stuck"
+
+        min_dist = 0
+        distance = {"Up": min_dist,
+                    "Down": min_dist,
+                    "Left": min_dist,
+                    "Right": min_dist}
+        up = cur_pos.up()
+        down = cur_pos.down()
+        left = cur_pos.left()
+        right = cur_pos.right()
+        for ghost in ghosts_in_vision:
+            print("ghost location:",ghost.coordinate())
+            for path in directions:
+                if path == "Up":
+                    next_location = cur_pos.up()
+                elif path == "Down":
+                    next_location = cur_pos.down()
+                elif path == "Left":
+                    next_location = cur_pos.left()
+                elif path == "Right":
+                    next_location = cur_pos.right()
+
+                distance[path] += next_location.manhattan_distance(ghost)
+
+            got_stuck = all([min_dist == vl for vl in distance.values()])
+            next_step = max(distance.items(), key=lambda x: x[1])[0] if not got_stuck else "Stuck"
+            return next_step
     else:
-        vision_path = [evaluate_coordinate(node, r1[0], r2[0]) for node in path if in_map(r1, r2, node)]
-        vision_dead_nodes = [evaluate_coordinate(node, r1[0], r2[0]) for node in dead_node if in_map(r1, r2, node)]
-        return Level1.level1(vision_map, vision_map.pacman_init_position, vision_path, vision_dead_nodes, True)
+        if not vision_map.treats:
+            directions = []
+            print("rand")
+            if can_move(map, cur_pos.up(), path, dead_node):
+                directions.append("Up")
+            if can_move(map, cur_pos.down(), path, dead_node):
+                directions.append("Down")
+            if can_move(map, cur_pos.left(), path, dead_node):
+                directions.append("Left")
+            if can_move(map, cur_pos.right(), path, dead_node):
+                directions.append("Right")
+            print(directions)
+            return random.choice(directions) if directions else "Stuck"
+        else:
+            vision_path = [evaluate_coordinate(node, r1[0], r2[0]) for node in path if in_map(r1, r2, node)]
+            vision_dead_nodes = [evaluate_coordinate(node, r1[0], r2[0]) for node in dead_node if in_map(r1, r2, node)]
+            return Level1.level1(vision_map, vision_map.pacman_init_position, vision_path, vision_dead_nodes, True)
 
 
