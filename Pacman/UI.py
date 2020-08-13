@@ -378,8 +378,10 @@ def startGame(data: Maze, difficulty):
                 #print("Explored: ", explored)
                 print("------------------------end")
             elif difficulty == 3:
+                print("current position:", player.position.coordinate())
                 next_move = Level3.level3(maze, player.position, path, dead_path, ghost_appearance)
                 print("--------------ghosts location:\n", [i.coordinate() for i in ghost_appearance])
+                print("------------------------end")
             else:
                 next_move = "Nah???"
 
@@ -418,6 +420,7 @@ def startGame(data: Maze, difficulty):
                     player.destroy()
                     died = True
                 if difficulty != 2:
+                    ghost.position.coordinate()
                     ghost.move()
 
         step_level += 1
