@@ -377,14 +377,16 @@ def startGame(data: Maze, difficulty):
             # Think next move
             if difficulty < 3:
                 print("current position:", player.position.coordinate())
-                next_move = Level1.level1(maze, player.position, path, dead_path, ghost)
+                # next_move = Level1.level1(maze, player.position, path, dead_path, ghost)
+                next_move = Level1.level1(data, player.position, path, dead_path, ghost)
                 # Move
                 #print("Dead path: ", dead_path)
                 #print("Explored: ", explored)
                 print("------------------------end")
             elif difficulty == 3:
                 print("current position:", player.position.coordinate())
-                next_move = Level3.level3(maze, player.position, path, dead_path, ghost_appearance)
+                #next_move = Level3.level3(maze, player.position, path, dead_path, ghost_appearance)
+                next_move = Level3.level3(data, player.position, path, dead_path, ghost_appearance)
                 print("--------------ghosts location:\n", [i.coordinate() for i in ghost_appearance])
                 print("------------------------end")
             else:
@@ -407,11 +409,14 @@ def startGame(data: Maze, difficulty):
                     # Add the treat gold to the player gold
                     player.gold += treat.gold
                     print('Player Gold: {}'.format(player.gold))
-                    #
-                    maze.maze_data[player.position.x][player.position.y] = 0
-                    maze.treats.remove(player.position)
 
-                    if not maze.treats:
+                    #maze.maze_data[player.position.x][player.position.y] = 0
+                    #maze.treats.remove
+                    data.maze_data[player.position.x][player.position.y] = 0
+                    data.treats.remove(player.position)
+
+                    #if not maze.treats:
+                    if not data.treats:
                         treats_left = False
                     # Destroy the treat
                     treat.destroy()
@@ -431,15 +436,25 @@ def startGame(data: Maze, difficulty):
                     """
                     #ghost.position.coordinate()
                     previous_pos = ghost.coord()
+                    '''
                     pos_x = int((previous_pos[0] + val_x)/24)
                     pos_y = int((val_y - previous_pos[1])/24)
-                    maze.maze_data[pos_x][pos_y] = 0
+                    '''
+                    pos_x = int((val_y - previous_pos[1]) / 24)
+                    pos_y = int((previous_pos[0] + val_x) / 24)
+                    #maze.maze_data[pos_x][pos_y] = 0
+                    data.maze_data[pos_x][pos_y] = 0
                     print("Ghost move from:", pos_x, pos_y)
                     ghost.move()
                     new_pos = ghost.coord()
+                    '''
                     pos_x = int((new_pos[0] + val_x)/24)
                     pos_y = int((val_y - new_pos[1])/24)
-                    maze.maze_data[pos_x][pos_y] = 3
+                    '''
+                    pos_x = int((val_y - new_pos[1]) / 24)
+                    pos_y = int((new_pos[0] + val_x) / 24)
+                    #maze.maze_data[pos_x][pos_y] = 3
+                    data.maze_data[pos_x][pos_y] = 3
                     print("to:", pos_x, pos_y)
 
         step_level += 1
