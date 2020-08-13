@@ -16,6 +16,9 @@ TCPS = 1  # time cost per step
 GOLD = 20
 DEATH_COST = 100000
 DELAY_TIME = 0.2
+# offset stuff
+val_x = 400
+val_y = 350
 # --------------------------------------------Initial things-----------------------------
 window = turtle.Screen()
 root = turtle.Screen()._root
@@ -152,12 +155,14 @@ class Ghost(turtle.Turtle):
         # self.direction = random.choice(["up", "down", "right", "left"])
         self.direction_to_init = None
         self.rotate = 0
+    def coord(self):
+        return (self.xcor(), self.ycor())
 
     def destroy(self):
         self.goto(2000, 2000)
         self.hideturtle()
 
-    def go_(self, direction):
+    def go_forward(self, direction):
         move_to_x = self.xcor()
         move_to_y = self.ycor()
         if direction == "up":
@@ -232,6 +237,7 @@ class Ghost(turtle.Turtle):
         return False
 
     def move(self):
+
         if self.direction_to_init == None:
             # clock-wise move-ment
             directions_list = ["up", "right", "down", "left"]
@@ -243,7 +249,7 @@ class Ghost(turtle.Turtle):
                 i += 1
             while count < 4:
                 count += 1
-                try_val = self.go_(directions_list[i])
+                try_val = self.go_forward(directions_list[i])
                 if try_val:
                     self.direction_to_init = directions_list[i]
                     break
@@ -289,8 +295,7 @@ def setup_maze(board, difficulty, init_index):
     player.position = init_index
     print("[Player's initial position]:",player.position.coordinate())
     # 288
-    val_x = 400
-    val_y = 350
+
     for i in range(len(board)):
         for j in range(len(board[i])):
             # get the character of each x,y coord
@@ -420,8 +425,22 @@ def startGame(data: Maze, difficulty):
                     player.destroy()
                     died = True
                 if difficulty != 2:
-                    ghost.position.coordinate()
+                    """
+                    screen_x = ((-1) * val_x) + (j * 24)
+                    screen_y = val_y - (i * 24)
+                    """
+                    #ghost.position.coordinate()
+                    previous_pos = ghost.coord()
+                    pos_x = int((previous_pos[0] + val_x)/24)
+                    pos_y = int((val_y - previous_pos[1])/24)
+                    maze.maze_data[pos_x][pos_y] = 0
+                    print("Ghost move from:", pos_x, pos_y)
                     ghost.move()
+                    new_pos = ghost.coord()
+                    pos_x = int((new_pos[0] + val_x)/24)
+                    pos_y = int((val_y - new_pos[1])/24)
+                    maze.maze_data[pos_x][pos_y] = 3
+                    print("to:", pos_x, pos_y)
 
         step_level += 1
         # Update screen

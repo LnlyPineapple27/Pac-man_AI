@@ -49,19 +49,12 @@ def vision(map: Maze, current_position: Point) -> (Maze, list, list):
     return Maze(map.N_row, map.M_col, vi, new_pos, treats), row_range, col_range
 
 
-def find_ghost_in_vision(map: Maze, current_position: Point):
+def find_ghost_in_vision(vision_map: Maze, current_position: Point):
     ghost_list = []
-    start_1 = current_position.x - 2 if current_position.x - 2 >= 0 else 0
-    end_1 = current_position.x + 2 if current_position.x + 2 < map.N_row else map.N_row
-    start_2 = current_position.y - 2 if current_position.y - 2 >= 0 else 0
-    end_2 = current_position.y + 2 if current_position.y + 2 < map.M_col else map.M_col
-
-    view = get_sub_list(start_1, end_1, start_2, end_2, map.maze_data)
-    for i in range(len(view)):
-        for j in range(len(view[i])):
-            if view[i][j] == map.MONSTER:
+    for i in range(vision_map.N_row):
+        for j in range(vision_map.M_col):
+            if vision_map.maze_data[i][j] == vision_map.MONSTER:
                 ghost_list.append(Point(current_position.x - 2 + i, current_position.y - 2 + j))
-
     return ghost_list
 
 
@@ -70,7 +63,7 @@ def level3(map: Maze, cur_pos: Point, path: list, dead_node:list, ghost_appearan
     # print ("start 2: ", start_2, "end 2:", end_2)
     # GHOST_ENCOUNTER = (map.N_row + map.M_col)/3
     vision_map, r1, r2 = vision(map, cur_pos)
-    print("Map:")
+    print("Vision Map:")
     vision_map.print_raw_data()
     print("Treats: ", [item.coordinate() for item in vision_map.treats])
     ghosts_in_vision = find_ghost_in_vision(map, cur_pos)
