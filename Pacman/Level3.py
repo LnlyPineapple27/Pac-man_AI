@@ -112,10 +112,24 @@ def level3(map: Maze, cur_pos: Point, path: list, dead_node: list, ghost_appeara
                 # add the place ghost appear into ghost_appearance
                 if ghost not in ghost_appearance:
                     ghost_appearance.append(ghost)
+
             print("--------------------------------CALCULATION:", directions)
             got_stuck = all([min_dist == vl for vl in directions.values()])
-            next_step = max(directions.items(), key=lambda x: x[1])[0] if not got_stuck else "Stuck"
 
+            # randomly delete 1 direction if more than 1 direction has value equal to max value in directions
+            dup_val = 0
+            d_list = []
+            temp_step = max(directions.items(), key=lambda x: x[1])[0] if not got_stuck else "Stuck"
+            for dir in directions:
+                if directions[dir] == temp_step:
+                    print(dir, directions[dir])
+                    d_list.append(dir)
+                    dup_val += 1
+            if dup_val > 1:
+                index = random.randrange(0, len(d_list), 1)
+                del directions[d_list[index]]
+
+            next_step = max(directions.items(), key=lambda x: x[1])[0] if not got_stuck else "Stuck"
             return next_step
         else:
             directions = []
@@ -145,7 +159,6 @@ def level3(map: Maze, cur_pos: Point, path: list, dead_node: list, ghost_appeara
                 directions["Left"] = 0
             if can_move(map, right, path, dead_node) and (right not in ghost_appearance):
                 directions["Right"] = 0
-
             for ghost in ghosts_in_vision:
                 for dir in directions:
                     if dir == "Up":
@@ -176,6 +189,7 @@ def level3(map: Maze, cur_pos: Point, path: list, dead_node: list, ghost_appeara
         else:
             vision_path = [evaluate_coordinate(node, r1[0], r2[0]) for node in path if in_map(r1, r2, node)]
             vision_dead_nodes = [evaluate_coordinate(node, r1[0], r2[0]) for node in dead_node if in_map(r1, r2, node)]
+
             return Level1.level1(vision_map, vision_map.pacman_init_position, vision_path, vision_dead_nodes, True)
 
 
