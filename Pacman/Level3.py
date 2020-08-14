@@ -97,15 +97,15 @@ def level3(map: Maze, cur_pos: Point, path: list, dead_node: list, ghost_appeara
                         temp_dist = up.manhattan_distance(ghost)
                         if directions["Up"] < temp_dist:
                             directions["Up"] = temp_dist
-                    if dir == "Down":
+                    elif dir == "Down":
                         temp_dist = down.manhattan_distance(ghost)
                         if directions["Down"] < temp_dist:
                             directions["Down"] = temp_dist
-                    if dir == "Left":
+                    elif dir == "Left":
                         temp_dist = left.manhattan_distance(ghost)
                         if directions["Left"] < temp_dist:
                             directions["Left"] = temp_dist
-                    if dir == "Right":
+                    elif dir == "Right":
                         temp_dist = right.manhattan_distance(ghost)
                         if directions["Right"] < temp_dist:
                             directions["Right"] = temp_dist
@@ -166,15 +166,15 @@ def level3(map: Maze, cur_pos: Point, path: list, dead_node: list, ghost_appeara
                         temp_dist = up.manhattan_distance(ghost)
                         if directions["Up"] < temp_dist:
                             directions["Up"] = temp_dist
-                    if dir == "Down":
+                    elif dir == "Down":
                         temp_dist = down.manhattan_distance(ghost)
                         if directions["Down"] < temp_dist:
                             directions["Down"] = temp_dist
-                    if dir == "Left":
+                    elif dir == "Left":
                         temp_dist = left.manhattan_distance(ghost)
                         if directions["Left"] < temp_dist:
                             directions["Left"] = temp_dist
-                    if dir == "Right":
+                    elif dir == "Right":
                         temp_dist = right.manhattan_distance(ghost)
                         if directions["Right"] < temp_dist:
                             directions["Right"] = temp_dist
