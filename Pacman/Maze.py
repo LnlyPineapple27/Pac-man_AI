@@ -84,11 +84,12 @@ class InputHandle:
             col = int(tmp.pop())
             row = int(tmp.pop())
             '''
-            # First line includes N, M as "N M"
+            # couting start from 0
+            # First line includes N, M as "N M" represent size of the maze
             tokens = lines.pop(0).split(" ")  # tokens = ["N", "M"]
             rows, columns = int(tokens[0]), int(tokens[1])
 
-            # Last line includes x, y as "x y"
+            # Last line includes x, y as "x y" represent where pacman is
             tokens = lines.pop().split(" ")  # tokens = ["x", "y"]
             p_man = Point(int(tokens[0]), int(tokens[1]))
 

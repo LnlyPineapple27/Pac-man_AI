@@ -7,6 +7,7 @@ import time
 import random
 import Level1
 import Level3
+import Level4
 
 EMPTY = 0
 WALL = 1
@@ -386,6 +387,15 @@ def startGame(data: Maze, difficulty):
                     ghost_appearance.pop()
                 print("--------------ghosts location:\n", [i.coordinate() for i in ghost_appearance])
                 print("------------------------end")
+            elif difficulty == 4:
+                print("current position:", player.position.coordinate())
+                # next_move = Level3.level3(maze, player.position, path, dead_path, ghost_appearance)
+                next_move = Level4.level4(data, player.position, path, dead_path, ghost_appearance)
+                # in case pac man get stuck between a corner and a ghost
+                if next_move == "Stuck" and ghost_appearance:
+                    ghost_appearance.pop()
+                print("--------------ghosts location:\n", [i.coordinate() for i in ghost_appearance])
+                print("------------------------end")
             else:
                 next_move = "Nah???"
 
@@ -423,7 +433,7 @@ def startGame(data: Maze, difficulty):
                     print("Player died!!")
                     player.destroy()
                     died = True
-                if difficulty != 2:
+                if difficulty > 2:
                     """
                     screen_x = ((-1) * val_x) + (j * 24)
                     screen_y = val_y - (i * 24)
@@ -433,8 +443,17 @@ def startGame(data: Maze, difficulty):
                     pos_y = int((previous_pos[0] + val_x) / 24)
                     data.maze_data[pos_x][pos_y] = 0
                     print("Ghost move from:", pos_x, pos_y)
-                    ghost.move()
+                    if difficulty == 3:
+                        ghost.move()
+                    elif difficulty == 4:
+                        ghost_point = Point(pos_x, pos_y)
+                        g_move = Level4.ghost_move(data, ghost_point)
+                    if g_move == "Stuck":
+                        ghost.move()
+                    else:
+                        ghost.go_forward(g_move)
                     new_pos = ghost.coord()
+                    print("here")
                     pos_x = int((val_y - new_pos[1]) / 24)
                     pos_y = int((new_pos[0] + val_x) / 24)
                     data.maze_data[pos_x][pos_y] = 3
@@ -459,10 +478,10 @@ def startGame(data: Maze, difficulty):
 if __name__ == "__main__":
     input_list = InputHandle()
     input_list.items()
-    maze = input_list.get_maze("Maze5.txt")
+    maze = input_list.get_maze("Maze10.txt")
     #maze = input_list.get_maze("Stuckin.txt")
     # maze.print_raw_data()
     # maze.print_entities()
-    difficulty = 3
+    difficulty = 4
     #messagebox.showinfo("UI will started!!","Click ok to start!!!")
     startGame(maze, difficulty)
