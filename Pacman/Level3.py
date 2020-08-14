@@ -91,6 +91,18 @@ def level3(map: Maze, cur_pos: Point, path: list, dead_node: list, ghost_appeara
             if can_move(map, right, path, dead_node) and (right not in ghost_appearance):
                 directions["Right"] = 0
 
+            # being corner reset path to find a way out
+            if len(directions) < 2:
+                path.clear()
+                if can_move(map, up, path, dead_node):
+                    directions["Up"] = 0
+                if can_move(map, down, path, dead_node):
+                    directions["Down"] = 0
+                if can_move(map, left, path, dead_node):
+                    directions["Left"] = 0
+                if can_move(map, right, path, dead_node):
+                    directions["Right"] = 0
+
             for ghost in ghosts_in_vision:
                 for dir in directions:
                     if dir == "Up":
@@ -159,6 +171,18 @@ def level3(map: Maze, cur_pos: Point, path: list, dead_node: list, ghost_appeara
                 directions["Left"] = 0
             if can_move(map, right, path, dead_node) and (right not in ghost_appearance):
                 directions["Right"] = 0
+
+            # being corner reset path to find a way out
+            if len(directions) < 2:
+                path.clear()
+                if can_move(map, up, path, dead_node):
+                    directions["Up"] = 0
+                if can_move(map, down, path, dead_node):
+                    directions["Down"] = 0
+                if can_move(map, left, path, dead_node):
+                    directions["Left"] = 0
+                if can_move(map, right, path, dead_node):
+                    directions["Right"] = 0
 
             for ghost in ghosts_in_vision:
                 for dir in directions:
