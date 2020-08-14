@@ -9,13 +9,7 @@ def ghost_can_move(map: Maze, cur_pos: Point) -> bool:
     return map.maze_data[cur_pos.x][cur_pos.y] != map.WALL
 
 
-def ghost_vision(map: Maze, current_position: Point) -> (Maze, list, list):
-    """
-    Return a tuple of (sub-map of map that in vision of pacman, row range, column range)
-    :param map:
-    :param current_position:
-    :return:
-    """
+def ghost_vision(map: Maze, current_position: Point):
     VISION_RANGE = 1
     start_1 = current_position.x - VISION_RANGE if current_position.x - VISION_RANGE >= 0 else 0
     end_1 = current_position.x + VISION_RANGE if current_position.x + VISION_RANGE < map.N_row else map.N_row - 1
@@ -31,14 +25,13 @@ def ghost_vision(map: Maze, current_position: Point) -> (Maze, list, list):
 
 
 def find_pacman_in_vision(vision_map: Maze, current_position: Point, row_range, col_range, pacman_location):
-    ghost_list = []
 
     print("Range: ", "row: ", row_range, "col: ", col_range)
     for i in row_range:
         for j in col_range:
-            if vision_map.maze_data[i - row_range[0]][j - col_range[0]] == ???:
-                ghost_list.append(Point(i, j))
-    return ghost_list
+            if (i, j) == pacman_location.coordinate():
+                return True
+    return False
 
 
 def ghost_move(map: Maze, cur_pos: Point, dict_for_ghost_tracing: dict, pacman_location):
@@ -49,19 +42,41 @@ def ghost_move(map: Maze, cur_pos: Point, dict_for_ghost_tracing: dict, pacman_l
     right = cur_pos.right()
 
     directions = []
-    view, new_pos, r1, r2 = ghost_vision(map, cur_pose)
-    print("ghost rand")
-    if ghost_can_move(map, up):
-        directions.append("Up")
-    if ghost_can_move(map, down):
-        directions.append("Down")
-    if ghost_can_move(map, left):
-        directions.append("Left")
-    if ghost_can_move(map, right):
-        directions.append("Right")
-    print(directions)
-    g_move = random.choice(directions) if directions else "Stuck"
-    return g_move
+    ghost_view, r1, r2 = ghost_vision(map, cur_pos)
+    if find_pacman_in_vision(map, cur_pos, r1, r2, pacman_location):
+        print("Pacman is near by")
+        distance = {}
+        max_dist = map.M_col + map.N_row
+        print("Up: ", end=" ")
+        #distance["Up"] = up.manhattan_distance(pacman_location) if ghost_can_move(map, up) else max_dist
+        distance["Up"] = up.euclid_distance(pacman_location) if ghost_can_move(map, up) else max_dist
+        print("Down: ", end=" ")
+        #distance["Down"] = down.manhattan_distance(pacman_location) if ghost_can_move(map, down) else max_dist
+        distance["Down"] = down.euclid_distance(pacman_location) if ghost_can_move(map, down) else max_dist
+        print("Left: ", end=" ")
+        #distance["Left"] = left.manhattan_distance(pacman_location) if ghost_can_move(map, left) else max_dist
+        distance["Left"] = left.euclid_distance(pacman_location) if ghost_can_move(map, left) else max_dist
+        print("Right: ", end=" ")
+        #distance["Right"] = right.manhattan_distance(pacman_location) if ghost_can_move(map, right) else max_dist
+        distance["Right"] = right.euclid_distance(pacman_location) if ghost_can_move(map, right) else max_dist
+
+        got_stuck = all([max_dist == vl for vl in distance.values()])
+        next_step = min(distance.items(), key=lambda x: x[1])[0] if not got_stuck else "Stuck"
+        print(distance)
+        return next_step
+    else:
+        print("ghost rand")
+        if ghost_can_move(map, up):
+            directions.append("Up")
+        if ghost_can_move(map, down):
+            directions.append("Down")
+        if ghost_can_move(map, left):
+            directions.append("Left")
+        if ghost_can_move(map, right):
+            directions.append("Right")
+        print(directions)
+        g_move = random.choice(directions) if directions else "Stuck"
+        return g_move
 
 
 #------------------------------------Dont touch this ------------------------------------------------
