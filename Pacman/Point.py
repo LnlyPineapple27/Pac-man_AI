@@ -13,7 +13,7 @@ class Point:
     def manhattan_distance(self, another):
         return abs(self.x - another.x) + abs(self.y - another.y)
 
-    def euclid_distant(self, another):
+    def euclid_distance(self, another):
         return math.sqrt((self.x - another.x)**2 + (self.y - another.y)**2)
 
     def coordinate(self):
