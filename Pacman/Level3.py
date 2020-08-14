@@ -46,7 +46,7 @@ def vision(map: Maze, current_position: Point) -> (Maze, list, list):
     col_range = range(start_2, end_2 + 1)
     treats = [evaluate_point(treat, start_1, start_2) for treat in map.treats if in_map(row_range, col_range, treat.coordinate())]
     new_pos = evaluate_point(current_position, start_1, start_2)
-    return Maze(map.N_row, map.M_col, vi, new_pos, treats), row_range, col_range
+    return Maze(len(row_range), len(col_range), vi, new_pos, treats), row_range, col_range
 
 '''
 def find_ghost_in_vision(vision_map: Maze, current_position: Point):

@@ -342,13 +342,7 @@ def startGame(data: Maze, difficulty):
     step = 1
     start_time = time.time()
     setup_maze(data.maze_data, difficulty, data.pacman_init_position)
-    """
-    turtle.listen()
-    turtle.onkey(player.go_up, 'Up')
-    turtle.onkey(player.go_down, 'Down')
-    turtle.onkey(player.go_right, 'Right')
-    turtle.onkey(player.go_left, 'Left')
-    """
+
     treats_left = bool(maze.treats)
     died = False
     explored = [player.position.coordinate()]
@@ -409,9 +403,6 @@ def startGame(data: Maze, difficulty):
                     # Add the treat gold to the player gold
                     player.gold += treat.gold
                     print('Player Gold: {}'.format(player.gold))
-
-                    #maze.maze_data[player.position.x][player.position.y] = 0
-                    #maze.treats.remove
                     data.maze_data[player.position.x][player.position.y] = 0
                     data.treats.remove(player.position)
 
@@ -434,26 +425,15 @@ def startGame(data: Maze, difficulty):
                     screen_x = ((-1) * val_x) + (j * 24)
                     screen_y = val_y - (i * 24)
                     """
-                    #ghost.position.coordinate()
                     previous_pos = ghost.coord()
-                    '''
-                    pos_x = int((previous_pos[0] + val_x)/24)
-                    pos_y = int((val_y - previous_pos[1])/24)
-                    '''
                     pos_x = int((val_y - previous_pos[1]) / 24)
                     pos_y = int((previous_pos[0] + val_x) / 24)
-                    #maze.maze_data[pos_x][pos_y] = 0
                     data.maze_data[pos_x][pos_y] = 0
                     print("Ghost move from:", pos_x, pos_y)
                     ghost.move()
                     new_pos = ghost.coord()
-                    '''
-                    pos_x = int((new_pos[0] + val_x)/24)
-                    pos_y = int((val_y - new_pos[1])/24)
-                    '''
                     pos_x = int((val_y - new_pos[1]) / 24)
                     pos_y = int((new_pos[0] + val_x) / 24)
-                    #maze.maze_data[pos_x][pos_y] = 3
                     data.maze_data[pos_x][pos_y] = 3
                     print("to:", pos_x, pos_y)
 
@@ -476,7 +456,7 @@ def startGame(data: Maze, difficulty):
 if __name__ == "__main__":
     input_list = InputHandle()
     input_list.items()
-    maze = input_list.get_maze("Stuckin.txt")
+    maze = input_list.get_maze("data1.txt")
     # maze.print_raw_data()
     # maze.print_entities()
     difficulty = 3
