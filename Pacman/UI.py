@@ -456,7 +456,7 @@ def startGame(data: Maze, difficulty):
 if __name__ == "__main__":
     input_list = InputHandle()
     input_list.items()
-    maze = input_list.get_maze("data1.txt")
+    maze = input_list.get_maze("Maze.txt")
     # maze.print_raw_data()
     # maze.print_entities()
     difficulty = 3

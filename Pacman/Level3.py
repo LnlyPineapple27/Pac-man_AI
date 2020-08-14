@@ -36,9 +36,9 @@ def vision(map: Maze, current_position: Point) -> (Maze, list, list):
     :return:
     """
     start_1 = current_position.x - 2 if current_position.x - 2 >= 0 else 0
-    end_1 = current_position.x + 2 if current_position.x + 2 < map.N_row else map.N_row
+    end_1 = current_position.x + 2 if current_position.x + 2 < map.N_row else map.N_row - 1
     start_2 = current_position.y - 2 if current_position.y - 2 >= 0 else 0
-    end_2 = current_position.y + 2 if current_position.y + 2 < map.M_col else map.M_col
+    end_2 = current_position.y + 2 if current_position.y + 2 < map.M_col else map.M_col - 1
     # print ("start 1: ", start_1, "end 1:", end_1)
     # print ("start 2: ", start_2, "end 2:", end_2)
     vi = get_sub_list(start_1, end_1, start_2, end_2, map.maze_data)
@@ -48,15 +48,6 @@ def vision(map: Maze, current_position: Point) -> (Maze, list, list):
     new_pos = evaluate_point(current_position, start_1, start_2)
     return Maze(len(row_range), len(col_range), vi, new_pos, treats), row_range, col_range
 
-'''
-def find_ghost_in_vision(vision_map: Maze, current_position: Point):
-    ghost_list = []
-    for i in range(vision_map.N_row):
-        for j in range(vision_map.M_col):
-            if vision_map.maze_data[i][j] == vision_map.MONSTER:
-                ghost_list.append(Point(current_position.x - 2 + i, current_position.y - 2 + j))
-    return ghost_list
-'''
 # chua fix lai row_range, col_range cua ham vision, ham find_ghost_in_vision con dang bi out of range
 def find_ghost_in_vision(vision_map: Maze, current_position: Point, row_range, col_range):
     ghost_list = []
@@ -64,8 +55,8 @@ def find_ghost_in_vision(vision_map: Maze, current_position: Point, row_range, c
     print("Range: ", "row: ", row_range, "col: ", col_range)
     for i in row_range:
         for j in col_range:
-            print("Hi", i - row_range[0], j - col_range[0])
-            print("value: ", vision_map.maze_data[i - row_range[0]][j - col_range[0]])
+            #print("Hi", i - row_range[0], j - col_range[0])
+            #print("value: ", vision_map.maze_data[i - row_range[0]][j - col_range[0]])
             if vision_map.maze_data[i - row_range[0]][j - col_range[0]] == vision_map.MONSTER:
                 ghost_list.append(Point(i, j))
     return ghost_list
@@ -79,7 +70,6 @@ def level3(map: Maze, cur_pos: Point, path: list, dead_node: list, ghost_appeara
     print("Vision Map:")
     vision_map.print_raw_data()
     print("Treats: ", [item.coordinate() for item in vision_map.treats])
-    #ghosts_in_vision = find_ghost_in_vision(vision_map, cur_pos)
     ghosts_in_vision = find_ghost_in_vision(vision_map, cur_pos, r1, r2)
     if not vision_map.treats:
         # food in vision
@@ -88,24 +78,7 @@ def level3(map: Maze, cur_pos: Point, path: list, dead_node: list, ghost_appeara
             down = cur_pos.down()
             left = cur_pos.left()
             right = cur_pos.right()
-            '''
-            directions = []
-            # get possible direction
-            if can_move(map, up, path, dead_node) and (up not in ghosts_in_vision):
-                directions.append("Up")
-            if can_move(map, down, path, dead_node) and (down not in ghosts_in_vision):
-                directions.append("Down")
-            if can_move(map, left, path, dead_node) and (left not in ghosts_in_vision):
-                directions.append("Left")
-            if can_move(map, right, path, dead_node) and (right not in ghosts_in_vision):
-                directions.append("Right")
 
-            min_dist = 0
-            distance = {"Up": min_dist,
-                        "Down": min_dist,
-                        "Left": min_dist,
-                        "Right": min_dist}
-            '''
             directions = {}
             min_dist = 0
             # get possible direction
@@ -139,26 +112,6 @@ def level3(map: Maze, cur_pos: Point, path: list, dead_node: list, ghost_appeara
                 # add the place ghost appear into ghost_appearance
                 if ghost not in ghost_appearance:
                     ghost_appearance.append(ghost)
-            '''
-            for ghost in ghosts_in_vision:
-                if ghost not in ghost_appearance:
-                    ghost_appearance.append(ghost)
-
-                for path in directions:
-                    if path == "Up":
-                        next_location = up
-                    elif path == "Down":
-                        next_location = down
-                    elif path == "Left":
-                        next_location = left
-                    elif path == "Right":
-                        next_location = right
-
-                    distance[path] += next_location.manhattan_distance(ghost)
-
-                    if next_location not in ghost_appearance:
-                        distance[path] += 10
-            '''
             print("--------------------------------CALCULATION:", directions)
             got_stuck = all([min_dist == vl for vl in directions.values()])
             next_step = max(directions.items(), key=lambda x: x[1])[0] if not got_stuck else "Stuck"
