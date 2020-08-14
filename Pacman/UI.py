@@ -166,11 +166,11 @@ class Ghost(turtle.Turtle):
     def go_forward(self, direction):
         move_to_x = self.xcor()
         move_to_y = self.ycor()
-        if direction == "up":
+        if direction == "Up":
             move_to_y += 24
-        elif direction == "down":
+        elif direction == "Down":
             move_to_y -= 24
-        elif direction == "right":
+        elif direction == "Right":
             move_to_x += 24
             if self.num == 0:
                 self.shape("..\\images\\gif\\Blue_right.gif")
@@ -182,7 +182,7 @@ class Ghost(turtle.Turtle):
                 self.shape("..\\images\\gif\\Red_right.gif")
             else:
                 self.shape("..\\images\\gif\\White_right.gif")
-        elif direction == "left":
+        elif direction == "Left":
             move_to_x -= 24
             if self.num == 0:
                 self.shape("..\\images\\gif\\Blue_left.gif")
@@ -203,11 +203,11 @@ class Ghost(turtle.Turtle):
     def go_backward(self, direction):
         move_to_x = self.xcor()
         move_to_y = self.ycor()
-        if direction == "down":
+        if direction == "Down":
             move_to_y += 24
-        elif direction == "up":
+        elif direction == "Up":
             move_to_y -= 24
-        elif direction == "left":
+        elif direction == "Left":
             move_to_x += 24
             if self.num == 0:
                 self.shape("..\\images\\gif\\Blue_right.gif")
@@ -219,7 +219,7 @@ class Ghost(turtle.Turtle):
                 self.shape("..\\images\\gif\\Red_right.gif")
             else:
                 self.shape("..\\images\\gif\\White_right.gif")
-        elif direction == "right":
+        elif direction == "Right":
             move_to_x -= 24
             if self.num == 0:
                 self.shape("..\\images\\gif\\Blue_left.gif")
@@ -241,7 +241,7 @@ class Ghost(turtle.Turtle):
 
         if self.direction_to_init == None:
             # clock-wise move-ment
-            directions_list = ["up", "right", "down", "left"]
+            directions_list = ["Up", "Right", "Down", "Left"]
             count = 0
             i = self.rotate
             if i == 3:
@@ -352,6 +352,7 @@ def startGame(data: Maze, difficulty):
     dead_path = []
     step_level = 0
     ghost_appearance = []
+    dict_for_ghost_tracing = {}
 
     while treats_left or not died:
         # Time delay
@@ -369,36 +370,29 @@ def startGame(data: Maze, difficulty):
         print("------------------------Step level: ", step)
         print("Position:", player.position.coordinate())
         if not died:
-            # Think next move
+            print("current position:", player.position.coordinate())
+            # Think next move base on dificulty
             if difficulty < 3:
-                print("current position:", player.position.coordinate())
                 # next_move = Level1.level1(maze, player.position, path, dead_path, ghost)
                 next_move = Level1.level1(data, player.position, path, dead_path, ghost)
                 # Move
                 #print("Dead path: ", dead_path)
                 #print("Explored: ", explored)
-                print("------------------------end")
+
             elif difficulty == 3:
-                print("current position:", player.position.coordinate())
-                #next_move = Level3.level3(maze, player.position, path, dead_path, ghost_appearance)
                 next_move = Level3.level3(data, player.position, path, dead_path, ghost_appearance)
                 # in case pac man get stuck between a corner and a ghost
                 if next_move == "Stuck" and ghost_appearance:
                     ghost_appearance.pop()
                 print("--------------ghosts location:\n", [i.coordinate() for i in ghost_appearance])
-                print("------------------------end")
             elif difficulty == 4:
-                print("current position:", player.position.coordinate())
-                # next_move = Level3.level3(maze, player.position, path, dead_path, ghost_appearance)
-                next_move = Level4.level4(data, player.position, path, dead_path, ghost_appearance)
-                # in case pac man get stuck between a corner and a ghost
-                if next_move == "Stuck" and ghost_appearance:
-                    ghost_appearance.pop()
-                print("--------------ghosts location:\n", [i.coordinate() for i in ghost_appearance])
-                print("------------------------end")
+                location = player.position.coordinate()
+                dict_for_ghost_tracing[location] = step
+                next_move = Level4.level4(data, player.position, path, dead_path)
             else:
                 next_move = "Nah???"
 
+            print("------------------------end")
             cur_pos = player.position.coordinate()
             if next_move == "Stuck":
                 print("Stuck")
@@ -447,11 +441,12 @@ def startGame(data: Maze, difficulty):
                         ghost.move()
                     elif difficulty == 4:
                         ghost_point = Point(pos_x, pos_y)
-                        g_move = Level4.ghost_move(data, ghost_point)
-                    if g_move == "Stuck":
-                        ghost.move()
-                    else:
-                        ghost.go_forward(g_move)
+                        g_move = Level4.ghost_move(data, ghost_point, dict_for_ghost_tracing, player.position)
+                        if g_move == "Stuck":
+                            ghost.move()
+                        else:
+                            ghost.go_forward(g_move)
+
                     new_pos = ghost.coord()
                     print("here")
                     pos_x = int((val_y - new_pos[1]) / 24)
@@ -479,9 +474,11 @@ if __name__ == "__main__":
     input_list = InputHandle()
     input_list.items()
     maze = input_list.get_maze("Maze10.txt")
-    #maze = input_list.get_maze("Stuckin.txt")
+    #maze = input_list.get_maze("Stuckin.txt")`
     # maze.print_raw_data()
     # maze.print_entities()
     difficulty = 4
     #messagebox.showinfo("UI will started!!","Click ok to start!!!")
     startGame(maze, difficulty)
+
+
