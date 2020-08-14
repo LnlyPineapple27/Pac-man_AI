@@ -48,7 +48,7 @@ def vision(map: Maze, current_position: Point) -> (Maze, list, list):
     new_pos = evaluate_point(current_position, start_1, start_2)
     return Maze(len(row_range), len(col_range), vi, new_pos, treats), row_range, col_range
 
-# chua fix lai row_range, col_range cua ham vision, ham find_ghost_in_vision con dang bi out of range
+
 def find_ghost_in_vision(vision_map: Maze, current_position: Point, row_range, col_range):
     ghost_list = []
 
@@ -71,14 +71,14 @@ def level3(map: Maze, cur_pos: Point, path: list, dead_node: list, ghost_appeara
     vision_map.print_raw_data()
     print("Treats: ", [item.coordinate() for item in vision_map.treats])
     ghosts_in_vision = find_ghost_in_vision(vision_map, cur_pos, r1, r2)
+    up = cur_pos.up()
+    down = cur_pos.down()
+    left = cur_pos.left()
+    right = cur_pos.right()
     if not vision_map.treats:
-        # food in vision
+        # food not in vision
         if ghosts_in_vision:
-            up = cur_pos.up()
-            down = cur_pos.down()
-            left = cur_pos.left()
-            right = cur_pos.right()
-
+            print("Ghost in vision be careful")
             directions = {}
             min_dist = 0
             # get possible direction
@@ -120,24 +120,20 @@ def level3(map: Maze, cur_pos: Point, path: list, dead_node: list, ghost_appeara
         else:
             directions = []
             print("rand")
-            if can_move(map, cur_pos.up(), path, dead_node):
+            if can_move(map, cur_pos.up(), path, dead_node) and (up not in ghost_appearance):
                 directions.append("Up")
-            if can_move(map, cur_pos.down(), path, dead_node):
+            if can_move(map, cur_pos.down(), path, dead_node) and (down not in ghost_appearance):
                 directions.append("Down")
-            if can_move(map, cur_pos.left(), path, dead_node):
+            if can_move(map, cur_pos.left(), path, dead_node) and (left not in ghost_appearance):
                 directions.append("Left")
-            if can_move(map, cur_pos.right(), path, dead_node):
+            if can_move(map, cur_pos.right(), path, dead_node) and (right not in ghost_appearance):
                 directions.append("Right")
             print(directions)
             return random.choice(directions) if directions else "Stuck"
     else:
-        # food not in vision
+        # food in vision
         if ghosts_in_vision:
-            up = cur_pos.up()
-            down = cur_pos.down()
-            left = cur_pos.left()
-            right = cur_pos.right()
-
+            print("Ghost in vision be careful")
             directions = {}
             min_dist = 0
             # get possible direction

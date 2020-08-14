@@ -457,6 +457,7 @@ if __name__ == "__main__":
     input_list = InputHandle()
     input_list.items()
     maze = input_list.get_maze("Maze.txt")
+    #maze = input_list.get_maze("Stuckin.txt")
     # maze.print_raw_data()
     # maze.print_entities()
     difficulty = 3
