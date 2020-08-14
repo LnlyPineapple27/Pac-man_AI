@@ -381,6 +381,9 @@ def startGame(data: Maze, difficulty):
                 print("current position:", player.position.coordinate())
                 #next_move = Level3.level3(maze, player.position, path, dead_path, ghost_appearance)
                 next_move = Level3.level3(data, player.position, path, dead_path, ghost_appearance)
+                # in case pac man get stuck between a corner and a ghost
+                if next_move == "Stuck" and ghost_appearance:
+                    ghost_appearance.pop()
                 print("--------------ghosts location:\n", [i.coordinate() for i in ghost_appearance])
                 print("------------------------end")
             else:
@@ -456,7 +459,7 @@ def startGame(data: Maze, difficulty):
 if __name__ == "__main__":
     input_list = InputHandle()
     input_list.items()
-    maze = input_list.get_maze("Maze.txt")
+    maze = input_list.get_maze("Maze5.txt")
     #maze = input_list.get_maze("Stuckin.txt")
     # maze.print_raw_data()
     # maze.print_entities()
