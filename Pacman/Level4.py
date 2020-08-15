@@ -4,6 +4,7 @@ import copy as cp
 import Level3
 import Level1
 
+GHOST_SENSITIVITY = 10
 
 def ghost_can_move(map: Maze, cur_pos: Point) -> bool:
     return map.maze_data[cur_pos.x][cur_pos.y] != map.WALL
@@ -26,7 +27,7 @@ def ghost_vision(map: Maze, current_position: Point):
 
 def find_pacman_in_vision(vision_map: Maze, current_position: Point, row_range, col_range, pacman_location):
 
-    print("Range: ", "row: ", row_range, "col: ", col_range)
+    #print("Range: ", "row: ", row_range, "col: ", col_range)
     for i in row_range:
         for j in col_range:
             if (i, j) == pacman_location.coordinate():
@@ -34,8 +35,8 @@ def find_pacman_in_vision(vision_map: Maze, current_position: Point, row_range, 
     return False
 
 
-def ghost_move(map: Maze, cur_pos: Point, dict_for_ghost_tracing: dict, pacman_location):
-    print("ghost current: ", cur_pos.coordinate())
+def ghost_move(map: Maze, cur_pos: Point, dict_for_ghost_tracing: dict, pacman_location, step_num, ghost_previous_move):
+    #print("ghost current: ", cur_pos.coordinate())
     up = cur_pos.up()
     down = cur_pos.down()
     left = cur_pos.left()
@@ -43,48 +44,72 @@ def ghost_move(map: Maze, cur_pos: Point, dict_for_ghost_tracing: dict, pacman_l
 
     directions = []
     ghost_view, r1, r2 = ghost_vision(map, cur_pos)
+
     if find_pacman_in_vision(map, cur_pos, r1, r2, pacman_location):
         print("Pacman is near by")
         distance = {}
         max_dist = map.M_col + map.N_row
-        print("Up: ", end=" ")
+        #print("Up: ", end=" ")
         #distance["Up"] = up.manhattan_distance(pacman_location) if ghost_can_move(map, up) else max_dist
         distance["Up"] = up.euclid_distance(pacman_location) if ghost_can_move(map, up) else max_dist
-        print("Down: ", end=" ")
+        #print("Down: ", end=" ")
         #distance["Down"] = down.manhattan_distance(pacman_location) if ghost_can_move(map, down) else max_dist
         distance["Down"] = down.euclid_distance(pacman_location) if ghost_can_move(map, down) else max_dist
-        print("Left: ", end=" ")
+        #print("Left: ", end=" ")
         #distance["Left"] = left.manhattan_distance(pacman_location) if ghost_can_move(map, left) else max_dist
         distance["Left"] = left.euclid_distance(pacman_location) if ghost_can_move(map, left) else max_dist
-        print("Right: ", end=" ")
+        #print("Right: ", end=" ")
         #distance["Right"] = right.manhattan_distance(pacman_location) if ghost_can_move(map, right) else max_dist
         distance["Right"] = right.euclid_distance(pacman_location) if ghost_can_move(map, right) else max_dist
 
         got_stuck = all([max_dist == vl for vl in distance.values()])
         next_step = min(distance.items(), key=lambda x: x[1])[0] if not got_stuck else "Stuck"
-        print(distance)
+        #print(distance)
         return next_step
     else:
-        print("ghost rand")
+        # Track down pacman by moving to its recent location
+        smell_map = {}
         if ghost_can_move(map, up):
-            directions.append("Up")
+            eval = dict_for_ghost_tracing.get(up.coordinate())
+            smell_map["Up"] = eval if (eval is not None) and (abs(step_num - eval) < GHOST_SENSITIVITY) else -1
         if ghost_can_move(map, down):
-            directions.append("Down")
+            eval = dict_for_ghost_tracing.get(down.coordinate())
+            smell_map["Down"] = eval if (eval is not None) and (abs(step_num - eval) < GHOST_SENSITIVITY) else -1
         if ghost_can_move(map, left):
-            directions.append("Left")
+            eval = dict_for_ghost_tracing.get(left.coordinate())
+            smell_map["Left"] = eval if (eval is not None) and (abs(step_num - eval) < GHOST_SENSITIVITY) else -1
         if ghost_can_move(map, right):
-            directions.append("Right")
-        print(directions)
-        g_move = random.choice(directions) if directions else "Stuck"
-        return g_move
+            eval = dict_for_ghost_tracing.get(right.coordinate())
+            smell_map["Right"] = eval if (eval is not None) and (abs(step_num - eval) < GHOST_SENSITIVITY) else -1
+
+
+        nearby_smell = all([vl == (-1) for vl in smell_map.values()])
+        if not nearby_smell:
+            next_step = max(smell_map.items(), key=lambda x: x[1])[0]
+            #print(distance)
+            return next_step
+        else:
+
+            print("ghost rand")
+            if ghost_can_move(map, up) and ghost_previous_move != "Down":
+                directions.append("Up")
+            if ghost_can_move(map, down) and ghost_previous_move != "Up":
+                directions.append("Down")
+            if ghost_can_move(map, left) and ghost_previous_move != "Right":
+                directions.append("Left")
+            if ghost_can_move(map, right) and ghost_previous_move != "Left":
+                directions.append("Right")
+            #print(directions)
+            g_move = random.choice(directions) if directions else "Stuck"
+            return g_move
 
 
 #------------------------------------Dont touch this ------------------------------------------------
 def level4(map: Maze, cur_pos: Point, path: list, dead_node: list):
     vision_map, r1, r2 = Level3.vision(map, cur_pos)
-    print("Vision Map:")
-    vision_map.print_raw_data()
-    print("Treats: ", [item.coordinate() for item in vision_map.treats])
+    #print("Vision Map:")
+    #vision_map.print_raw_data()
+    #print("Treats: ", [item.coordinate() for item in vision_map.treats])
     ghosts_in_vision = Level3.find_ghost_in_vision(vision_map, cur_pos, r1, r2)
     up = cur_pos.up()
     down = cur_pos.down()
@@ -138,7 +163,7 @@ def level4(map: Maze, cur_pos: Point, path: list, dead_node: list):
                             directions["Right"] = temp_dist
 
 
-            print("--------------------------------CALCULATION:", directions)
+            #print("--------------------------------CALCULATION:", directions)
             got_stuck = all([min_dist == vl for vl in directions.values()])
 
             # randomly delete 1 direction if more than 1 direction has value equal to max value in directions
@@ -147,7 +172,7 @@ def level4(map: Maze, cur_pos: Point, path: list, dead_node: list):
             temp_step = max(directions.items(), key=lambda x: x[1])[0] if not got_stuck else "Stuck"
             for dir in directions:
                 if directions[dir] == temp_step:
-                    print(dir, directions[dir])
+                    #print(dir, directions[dir])
                     d_list.append(dir)
                     dup_val += 1
             if dup_val > 1:
@@ -158,7 +183,7 @@ def level4(map: Maze, cur_pos: Point, path: list, dead_node: list):
             return next_step
         else:
             directions = []
-            print("rand")
+            #print("rand")
             if Level3.can_move(map, cur_pos.up(), path, dead_node):
                 directions.append("Up")
             if Level3.can_move(map, cur_pos.down(), path, dead_node):
@@ -167,12 +192,12 @@ def level4(map: Maze, cur_pos: Point, path: list, dead_node: list):
                 directions.append("Left")
             if Level3.can_move(map, cur_pos.right(), path, dead_node):
                 directions.append("Right")
-            print(directions)
+            #print(directions)
             return random.choice(directions) if directions else "Stuck"
     else:
         # food in vision
         if ghosts_in_vision:
-            print("Ghost in vision be careful")
+            #print("Ghost in vision be careful")
             directions = {}
             min_dist = 0
             # get possible direction
@@ -217,7 +242,7 @@ def level4(map: Maze, cur_pos: Point, path: list, dead_node: list):
                             directions["Right"] = temp_dist
 
 
-            print("--------------------------------CALCULATION:", directions)
+            #print("--------------------------------CALCULATION:", directions)
             got_stuck = all([min_dist == vl for vl in directions.values()])
 
             # randomly delete 1 direction if more than 1 direction has value equal to max value in directions
@@ -226,7 +251,7 @@ def level4(map: Maze, cur_pos: Point, path: list, dead_node: list):
             temp_step = max(directions.items(), key=lambda x: x[1])[0] if not got_stuck else "Stuck"
             for dir in directions:
                 if directions[dir] == temp_step:
-                    print(dir, directions[dir])
+                    #print(dir, directions[dir])
                     d_list.append(dir)
                     dup_val += 1
             if dup_val > 1:
