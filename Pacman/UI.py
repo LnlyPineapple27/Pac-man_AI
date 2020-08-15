@@ -156,6 +156,7 @@ class Ghost(turtle.Turtle):
         # self.direction = random.choice(["up", "down", "right", "left"])
         self.direction_to_init = None
         self.rotate = 0
+        self.previous_move = None
     def coord(self):
         return (self.xcor(), self.ycor())
 
@@ -194,9 +195,9 @@ class Ghost(turtle.Turtle):
                 self.shape("..\\images\\gif\\Red_left.gif")
             else:
                 self.shape("..\\images\\gif\\White_left.gif")
-
         if (move_to_x, move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
+            self.forward(0)
             return True
         return False
 
@@ -234,11 +235,11 @@ class Ghost(turtle.Turtle):
 
         if (move_to_x, move_to_y) not in walls:
             self.goto(move_to_x, move_to_y)
+            self.forward(0)
             return True
         return False
 
     def move(self):
-
         if self.direction_to_init == None:
             # clock-wise move-ment
             directions_list = ["Up", "Right", "Down", "Left"]
@@ -263,9 +264,11 @@ class Ghost(turtle.Turtle):
             self.rotate = i
         else:
             try_val = self.go_backward(self.direction_to_init)
+            self.forward(0)
             if not try_val:
                 print("[Error]: Something went wrong in ghost's movement to get back to initial place")
             self.direction_to_init = None
+
 
 
 class Treasure(turtle.Turtle):
@@ -350,7 +353,7 @@ def startGame(data: Maze, difficulty):
     path = [player.position.coordinate()]
     ghost = difficulty > 1
     dead_path = []
-    step_level = 0
+
     ghost_appearance = []
     dict_for_ghost_tracing = {}
 
@@ -387,6 +390,7 @@ def startGame(data: Maze, difficulty):
                 print("--------------ghosts location:\n", [i.coordinate() for i in ghost_appearance])
             elif difficulty == 4:
                 location = player.position.coordinate()
+                # leave trail for ghosts to follow
                 dict_for_ghost_tracing[location] = step
                 next_move = Level4.level4(data, player.position, path, dead_path)
             else:
@@ -429,6 +433,7 @@ def startGame(data: Maze, difficulty):
                     died = True
                 if difficulty > 2:
                     """
+                    # How turtle tiles's location was set from maze coordinate
                     screen_x = ((-1) * val_x) + (j * 24)
                     screen_y = val_y - (i * 24)
                     """
@@ -436,25 +441,28 @@ def startGame(data: Maze, difficulty):
                     pos_x = int((val_y - previous_pos[1]) / 24)
                     pos_y = int((previous_pos[0] + val_x) / 24)
                     data.maze_data[pos_x][pos_y] = 0
-                    print("Ghost move from:", pos_x, pos_y)
+                    #print("Ghost move from:", pos_x, pos_y)
                     if difficulty == 3:
                         ghost.move()
                     elif difficulty == 4:
                         ghost_point = Point(pos_x, pos_y)
-                        g_move = Level4.ghost_move(data, ghost_point, dict_for_ghost_tracing, player.position)
+                        g_move = Level4.ghost_move(data, ghost_point, dict_for_ghost_tracing, player.position, step, ghost.previous_move)
+                        ghost.previous_move = g_move
                         if g_move == "Stuck":
                             ghost.move()
+                            ghost.forward(0)
                         else:
-                            ghost.go_forward(g_move)
-
+                            valid_move = ghost.go_forward(g_move)
+                            ghost.forward(0)
+                            if not valid_move:
+                                print("---------------------Ghost hit walls - WTF! this is not suppose to happen")
                     new_pos = ghost.coord()
-                    print("here")
+                    #print("here")
                     pos_x = int((val_y - new_pos[1]) / 24)
                     pos_y = int((new_pos[0] + val_x) / 24)
                     data.maze_data[pos_x][pos_y] = 3
-                    print("to:", pos_x, pos_y)
+                    #print("to:", pos_x, pos_y)
 
-        step_level += 1
         # Update screen
 
         window.update()
@@ -473,7 +481,7 @@ def startGame(data: Maze, difficulty):
 if __name__ == "__main__":
     input_list = InputHandle()
     input_list.items()
-    maze = input_list.get_maze("Maze10.txt")
+    maze = input_list.get_maze("Maze2.txt")
     #maze = input_list.get_maze("Stuckin.txt")`
     # maze.print_raw_data()
     # maze.print_entities()
