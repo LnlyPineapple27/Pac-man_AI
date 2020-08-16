@@ -4,7 +4,7 @@ import copy as cp
 import Level3
 import Level1
 
-GHOST_SENSITIVITY = 10
+GHOST_SENSITIVITY = 20
 
 def ghost_can_move(map: Maze, cur_pos: Point) -> bool:
     return map.maze_data[cur_pos.x][cur_pos.y] != map.WALL
